@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class BrideGrooms extends Model
+class Brides extends Model
 {
     use HasFactory;
     protected $guarded = [
@@ -16,8 +16,8 @@ class BrideGrooms extends Model
     {
         return $this->belongsTo(Projects::class, 'project_id');
     }
-    public function familyMembers()
+    public function familyMembersBride()
     {
-        return $this->hasMany(familyMembers::class, 'bride_groom_id');
+        return $this->hasMany(FamilyMemberBrides::class, 'bride_id');
     }
 }

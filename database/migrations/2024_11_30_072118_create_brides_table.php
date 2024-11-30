@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('todolists', function (Blueprint $table) {
+        Schema::create('brides', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_todolist_id')->constrained('category_todolists')->onDelete('cascade');
+            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->string('name')->nullable();
-            $table->boolean('status')->default(0);
+            $table->string('child')->nullable();
+            $table->string('father_name')->nullable();
+            $table->string('mother_name')->nullable();
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('todolists');
+        Schema::dropIfExists('brides');
     }
 };

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
+use App\Models\Events;
 use App\Models\Projects;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -61,6 +62,14 @@ class AuthController extends Controller
                     'user_id' => $user->id,
                 ]);
             }
+
+            $event = Events::create([
+                'project_id' => $project->id,
+                'event_name' => $request->event_name,
+                'event_datetime' => $request->event_datetime,
+                'address' => $request->address,
+                'description' => $request->description,
+            ]);
 
             DB::commit();
             return response()->json([

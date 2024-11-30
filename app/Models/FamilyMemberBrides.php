@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class FamilyMembers extends Model
+class FamilyMemberBrides extends Model
 {
     use HasFactory;
     protected $guarded = [
         'id'
     ];
-    public function brideGroom()
+    public function bride()
     {
-        return $this->belongsTo(BrideGrooms::class, 'bride_groom_id');
+        return $this->belongsTo(Brides::class, 'bride_id');
     }
 }

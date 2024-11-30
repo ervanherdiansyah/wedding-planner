@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->string('image')->nullable();
+            $table->string('bridegroom_name')->nullable();
             $table->string('event_name')->nullable();
             $table->dateTime('event_datetime')->nullable();
             $table->text('address')->nullable();
