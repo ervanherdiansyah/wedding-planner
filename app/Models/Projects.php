@@ -21,4 +21,20 @@ class Projects extends Model
     {
         return $this->hasMany(ProjectMemberships::class, 'project_id');
     }
+    public function brideGroom()
+    {
+        return $this->hasMany(BrideGrooms::class, 'project_id');
+    }
+    public function event()
+    {
+        return $this->hasMany(Events::class, 'project_id');
+    }
+    public function categoryTodolist()
+    {
+        return $this->hasMany(CategoryTodolists::class, 'project_id');
+    }
+    public function budget()
+    {
+        return $this->hasMany(Budgets::class, 'project_id');
+    }
 }

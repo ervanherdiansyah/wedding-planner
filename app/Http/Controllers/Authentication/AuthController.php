@@ -36,6 +36,7 @@ class AuthController extends Controller
                 'password' => 'required|min:8|max:32',
                 'email' => 'required|unique:users',
                 'phone_number' => 'required',
+                'package' => 'required',
             ]);
 
             $user = User::create([
@@ -43,14 +44,23 @@ class AuthController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'phone_number' => $request->phone_number,
+                'package' => $request->package,
                 'role' => "user",
             ]);
 
-            $project = Projects::create([
-                'name' => $request->name,
-                'invited_project' => 2,
-                'user_id' => $user->id,
-            ]);
+            if ($request->package == 1 || $request->package == 2) {
+                $project = Projects::create([
+                    'name' => $request->name,
+                    'invited_project' => 1,
+                    'user_id' => $user->id,
+                ]);
+            } elseif ($request->package == 3) {
+                $project = Projects::create([
+                    'name' => $request->name,
+                    'invited_project' => 4,
+                    'user_id' => $user->id,
+                ]);
+            }
 
             DB::commit();
             return response()->json([
@@ -73,7 +83,14 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        return $this->respondWithToken($token);
+        return response()->json([
+            'message' => 'Successfully Login',
+            'data' => [
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60
+            ]
+        ], 200);
     }
 
     /**
@@ -83,7 +100,10 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return response()->json(auth()->user());
+        return response()->json([
+            'message' => 'Successfully get data user',
+            'data' => auth()->user()
+        ]);
     }
 
     /**
@@ -105,7 +125,14 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return response()->json([
+            'message' => 'Successfully refresh token',
+            'data' => [
+                'access_token' => auth()->refresh(),
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60
+            ]
+        ]);
     }
 
     /**
