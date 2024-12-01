@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brides;
 use App\Models\Events;
+use App\Models\FamilyMemberBrides;
+use App\Models\FamilyMemberGrooms;
+use App\Models\Grooms;
 use App\Models\Projects;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -65,16 +69,38 @@ class AuthController extends Controller
 
             $event = Events::create([
                 'project_id' => $project->id,
+                'bridegroom_name' => $request->bridegroom_name,
                 'event_name' => $request->event_name,
                 'event_datetime' => $request->event_datetime,
                 'address' => $request->address,
                 'description' => $request->description,
             ]);
 
+            $bride = Brides::create([
+                'project_id' => $project->id,
+                'name_bride' => $request->name_bride,
+                'child_bride' => $request->child_bride,
+                'father_name_bride' => $request->father_name_bride,
+                'mother_name_bride' => $request->mother_name_bride,
+            ]);
+
+            $FamilyMemberBrides = FamilyMemberBrides::create([
+                'bride_id' => $bride->id
+            ]);
+            $groom = Grooms::create([
+                'project_id' => $project->id,
+                'name_groom' => $request->name_groom,
+                'child_groom' => $request->child_groom,
+                'father_name_groom' => $request->father_name_groom,
+                'mother_name_groom' => $request->mother_name_groom,
+            ]);
+            $FamilyMemberGrooms = FamilyMemberGrooms::create([
+                'groom_id' => $groom->id
+            ]);
             DB::commit();
             return response()->json([
                 'message' => 'Success Register',
-                'data' => ['user' => $user, 'project' => $project]
+                'data' => ['user' => $user, 'project' => $project, 'event' => $event, 'bride' => $bride, 'groom' => $groom]
             ], 200);
         } catch (\Throwable $th) {
             //throw $th;

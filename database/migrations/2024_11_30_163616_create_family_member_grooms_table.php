@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('family_member_grooms', function (Blueprint $table) {
             $table->id();
             $table->foreignId('groom_id')->constrained('grooms')->onDelete('cascade');
-            $table->string('relationship')->nullable();
-            $table->string('name_family')->nullable();
+            $table->string('relationship_groom')->nullable();
+            $table->string('name_family_groom')->nullable();
             $table->timestamps();
         });
     }

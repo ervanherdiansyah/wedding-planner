@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('brides', function (Blueprint $table) {
             $table->id();
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
-            $table->string('name')->nullable();
-            $table->string('child')->nullable();
-            $table->string('father_name')->nullable();
-            $table->string('mother_name')->nullable();
-            $table->string('photo')->nullable();
+            $table->string('name_bride')->nullable();
+            $table->string('child_bride')->nullable();
+            $table->string('father_name_bride')->nullable();
+            $table->string('mother_name_bride')->nullable();
+            $table->string('photo_bride')->nullable();
             $table->timestamps();
         });
     }
