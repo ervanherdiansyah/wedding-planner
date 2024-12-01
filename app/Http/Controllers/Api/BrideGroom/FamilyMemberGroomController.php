@@ -17,10 +17,10 @@ class FamilyMemberGroomController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function getFamilyMemberGroomsByBrideId($bride_id)
+    public function getFamilyMemberGroomsByGroomId($groom_id)
     {
         try {
-            $FamilyMemberGrooms = FamilyMemberGrooms::where('bride_id', $bride_id)->get();
+            $FamilyMemberGrooms = FamilyMemberGrooms::where('groom_id', $groom_id)->get();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $FamilyMemberGrooms], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
@@ -68,7 +68,7 @@ class FamilyMemberGroomController extends Controller
             // Cari data bride berdasarkan ID
             $FamilyMemberGrooms = FamilyMemberGrooms::find($id);
             if (!$FamilyMemberGrooms) {
-                return response()->json(['message' => 'Bride not found'], 404);
+                return response()->json(['message' => 'Family Member Groom not found'], 404);
             }
             // Update data bride
             $FamilyMemberGrooms->update([
@@ -77,7 +77,7 @@ class FamilyMemberGroomController extends Controller
             ]);
 
             // Return response sukses
-            return response()->json(['message' => 'Bride updated successfully', 'data' => $FamilyMemberGrooms], 200);
+            return response()->json(['message' => 'Updated data successfully', 'data' => $FamilyMemberGrooms], 200);
         } catch (\Throwable $th) {
             // Tangani error
             return response()->json(['message' => 'An error occurred', 'error' => $th->getMessage()], 500);

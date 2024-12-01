@@ -118,7 +118,7 @@ class BrideController extends Controller
             }
 
             // Return response sukses
-            return response()->json(['message' => 'Bride updated successfully', 'data' => $bride], 200);
+            return response()->json(['message' => 'Updated Data successfully', 'data' => $bride], 200);
         } catch (\Throwable $th) {
             // Tangani error
             return response()->json(['message' => 'An error occurred', 'error' => $th->getMessage()], 500);

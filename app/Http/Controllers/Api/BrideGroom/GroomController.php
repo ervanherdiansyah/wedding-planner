@@ -85,7 +85,7 @@ class GroomController extends Controller
             // Cari data groom berdasarkan ID
             $groom = Grooms::find($id);
             if (!$groom) {
-                return response()->json(['message' => 'groom not found'], 404);
+                return response()->json(['message' => 'Groom not found'], 404);
             }
 
             // Periksa jika ada file yang diunggah

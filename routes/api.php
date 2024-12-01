@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\BrideGroom\FamilyMemberBrideController;
 use App\Http\Controllers\Api\BrideGroom\FamilyMemberGroomController;
 use App\Http\Controllers\Api\BrideGroom\GroomController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\RundownController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -62,10 +63,18 @@ Route::group([
         Route::put('/family-member-groom/update/{id}', [FamilyMemberGroomController::class, 'updategetFamilyMemberGrooms']);
         Route::delete('/family-member-groom/delete/{id}', [FamilyMemberGroomController::class, 'deletegetFamilyMemberGrooms']);
         // Event
-        Route::get('/event', [EventController::class, 'getEvent']);
-        Route::post('/event/create', [EventController::class, 'createEvent']);
-        Route::get('/event/{project_id}', [EventController::class, 'getEventByProjectId']);
-        Route::put('/event/update/{id}', [EventController::class, 'updateEvent']);
-        Route::delete('/event/delete/{id}', [EventController::class, 'deleteEvent']);
+        Route::get('/event', [EventController::class, 'getEvents']);
+        Route::post('/event/create', [EventController::class, 'createEvents']);
+        Route::get('/event-project-id/{project_id}', [EventController::class, 'getEventsByProjectId']);
+        Route::get('/event/{id}', [EventController::class, 'getEventsById']);
+        Route::put('/event/update/{id}', [EventController::class, 'updateEvents']);
+        Route::delete('/event/delete/{id}', [EventController::class, 'deleteEvents']);
+        // Rundown
+        Route::get('/rundown', [RundownController::class, 'getRundowns']);
+        Route::post('/rundown/create', [RundownController::class, 'createRundowns']);
+        Route::get('/rundown-project-id/{project_id}', [RundownController::class, 'getRundownsByProjectId']);
+        Route::get('/rundown/{id}', [RundownController::class, 'getRundownsById']);
+        Route::put('/rundown/update/{id}', [RundownController::class, 'updateRundowns']);
+        Route::delete('/rundown/delete/{id}', [RundownController::class, 'deleteRundowns']);
     });
 });

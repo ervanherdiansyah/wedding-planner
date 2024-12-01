@@ -68,7 +68,7 @@ class FamilyMemberBrideController extends Controller
             // Cari data bride berdasarkan ID
             $FamilyMemberBrides = FamilyMemberBrides::find($id);
             if (!$FamilyMemberBrides) {
-                return response()->json(['message' => 'Bride not found'], 404);
+                return response()->json(['message' => 'Family Member Bride not found'], 404);
             }
             // Update data bride
             $FamilyMemberBrides->update([
@@ -77,7 +77,7 @@ class FamilyMemberBrideController extends Controller
             ]);
 
             // Return response sukses
-            return response()->json(['message' => 'Bride updated successfully', 'data' => $FamilyMemberBrides], 200);
+            return response()->json(['message' => 'Updated data successfully', 'data' => $FamilyMemberBrides], 200);
         } catch (\Throwable $th) {
             // Tangani error
             return response()->json(['message' => 'An error occurred', 'error' => $th->getMessage()], 500);
