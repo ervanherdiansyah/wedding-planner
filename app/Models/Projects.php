@@ -21,9 +21,13 @@ class Projects extends Model
     {
         return $this->hasMany(ProjectMemberships::class, 'project_id');
     }
-    public function brideGroom()
+    public function groom()
     {
-        return $this->hasMany(BrideGrooms::class, 'project_id');
+        return $this->hasMany(Grooms::class, 'project_id');
+    }
+    public function bride()
+    {
+        return $this->hasMany(Brides::class, 'project_id');
     }
     public function event()
     {
@@ -36,5 +40,25 @@ class Projects extends Model
     public function budget()
     {
         return $this->hasMany(Budgets::class, 'project_id');
+    }
+    public function eventCommite()
+    {
+        return $this->hasMany(EventCommittees::class, 'project_id');
+    }
+    public function listPhoto()
+    {
+        return $this->hasMany(ListPhoto::class, 'project_id');
+    }
+    public function songList()
+    {
+        return $this->hasMany(SongLists::class, 'project_id');
+    }
+    public function vipGuestList()
+    {
+        return $this->hasMany(VipGuestLists::class, 'project_id');
+    }
+    public function uniformCategory()
+    {
+        return $this->hasMany(UniformCategories::class, 'project_id');
     }
 }

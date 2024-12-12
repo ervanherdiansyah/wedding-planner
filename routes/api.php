@@ -4,13 +4,22 @@ use App\Http\Controllers\Api\BrideGroom\BrideController;
 use App\Http\Controllers\Api\BrideGroom\FamilyMemberBrideController;
 use App\Http\Controllers\Api\BrideGroom\FamilyMemberGroomController;
 use App\Http\Controllers\Api\BrideGroom\GroomController;
+use App\Http\Controllers\Api\Budget\BudgetController;
+use App\Http\Controllers\Api\Budget\CategoryBudgetController;
+use App\Http\Controllers\Api\Budget\ListBudgetController;
+use App\Http\Controllers\Api\EventCommitteController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\ListPhotoController;
 use App\Http\Controllers\Api\RundownController;
+use App\Http\Controllers\Api\SongListsController;
 use App\Http\Controllers\Api\Todolist\CategoryTodolistController;
 use App\Http\Controllers\Api\Todolist\SubTodolistController;
 use App\Http\Controllers\Api\Todolist\TodolistController;
+use App\Http\Controllers\Api\Uniform\UniformCategoryController;
+use App\Http\Controllers\Api\Uniform\UniformController;
 use App\Http\Controllers\Api\Vendor\CategoryVendorController;
 use App\Http\Controllers\Api\Vendor\ListVendorController;
+use App\Http\Controllers\Api\VipGuestListsController;
 use App\Http\Controllers\Authentication\AuthController;
 use App\Http\Controllers\Controller;
 use App\Models\CategoryVendors;
@@ -39,7 +48,6 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 
-    //middleware member affliasi
     Route::middleware(['check.role:user'])->group(function () {
         // Bride
         Route::get('/bride', [BrideController::class, 'getBride']);
@@ -129,5 +137,68 @@ Route::group([
         Route::get('/list-vendor/{id}', [ListVendorController::class, 'getListVendorsById']);
         Route::put('/list-vendor/update/{id}', [ListVendorController::class, 'updateListVendors']);
         Route::delete('/list-vendor/delete/{id}', [ListVendorController::class, 'deleteListVendors']);
+        // Event Committe
+        Route::get('/event-committe', [EventCommitteController::class, 'getEventCommittees']);
+        Route::post('/event-committe/create', [EventCommitteController::class, 'createEventCommittees']);
+        Route::get('/event-committe-project-id/{project_id}', [EventCommitteController::class, 'getEventCommitteesByProjectId']);
+        Route::get('/event-committe/{id}', [EventCommitteController::class, 'getEventCommitteesById']);
+        Route::put('/event-committe/update/{id}', [EventCommitteController::class, 'updateEventCommittees']);
+        Route::delete('/event-committe/delete/{id}', [EventCommitteController::class, 'deleteEventCommittees']);
+        // List Photo
+        Route::get('/list-photo', [ListPhotoController::class, 'getListPhoto']);
+        Route::post('/list-photo/create', [ListPhotoController::class, 'createListPhoto']);
+        Route::get('/list-photo-project-id/{project_id}', [ListPhotoController::class, 'getListPhotoByProjectId']);
+        Route::get('/list-photo/{id}', [ListPhotoController::class, 'getListPhotoById']);
+        Route::put('/list-photo/update/{id}', [ListPhotoController::class, 'updateListPhoto']);
+        Route::delete('/list-photo/delete/{id}', [ListPhotoController::class, 'deleteListPhoto']);
+        // Song List
+        Route::get('/song-list', [SongListsController::class, 'getSongLists']);
+        Route::post('/song-list/create', [SongListsController::class, 'createSongLists']);
+        Route::get('/song-list-project-id/{project_id}', [SongListsController::class, 'getSongListsByProjectId']);
+        Route::get('/song-list/{id}', [SongListsController::class, 'getSongListsById']);
+        Route::put('/song-list/update/{id}', [SongListsController::class, 'updateSongLists']);
+        Route::delete('/song-list/delete/{id}', [SongListsController::class, 'deleteSongLists']);
+        // VIP Guest list
+        Route::get('/vip-guest-list', [VipGuestListsController::class, 'getVipGuestLists']);
+        Route::post('/vip-guest-list/create', [VipGuestListsController::class, 'createVipGuestLists']);
+        Route::get('/vip-guest-list-project-id/{project_id}', [VipGuestListsController::class, 'getVipGuestListsByProjectId']);
+        Route::get('/vip-guest-list/{id}', [VipGuestListsController::class, 'getVipGuestListsById']);
+        Route::put('/vip-guest-list/update/{id}', [VipGuestListsController::class, 'updateVipGuestLists']);
+        Route::delete('/vip-guest-list/delete/{id}', [VipGuestListsController::class, 'deleteVipGuestLists']);
+        // Uniform Category
+        Route::get('/uniform-category', [UniformCategoryController::class, 'getUniformCategories']);
+        Route::post('/uniform-category/create', [UniformCategoryController::class, 'createUniformCategories']);
+        Route::get('/uniform-category-project-id/{project_id}', [UniformCategoryController::class, 'getUniformCategoriesByProjectId']);
+        Route::get('/uniform-category/{id}', [UniformCategoryController::class, 'getUniformCategoriesById']);
+        Route::put('/uniform-category/update/{id}', [UniformCategoryController::class, 'updateUniformCategories']);
+        Route::delete('/uniform-category/delete/{id}', [UniformCategoryController::class, 'deleteUniformCategories']);
+        // Uniform
+        Route::get('/uniform', [UniformController::class, 'getUniform']);
+        Route::post('/uniform/create', [UniformController::class, 'createUniform']);
+        Route::get('/uniform-uniform-category-id/{uniform_category_id}', [UniformController::class, 'getUniformByUniformCategoryId']);
+        Route::get('/uniform/{id}', [UniformController::class, 'getUniformById']);
+        Route::put('/uniform/update/{id}', [UniformController::class, 'updateUniform']);
+        Route::delete('/uniform/delete/{id}', [UniformController::class, 'deleteUniform']);
+        // Budget
+        Route::get('/budget', [BudgetController::class, 'getBudgets']);
+        Route::post('/budget/create', [BudgetController::class, 'createBudgets']);
+        Route::get('/budget-project-id/{project_id}', [BudgetController::class, 'getBudgetsByProjectId']);
+        Route::get('/budget/{id}', [BudgetController::class, 'getBudgetsById']);
+        Route::put('/budget/update/{id}', [BudgetController::class, 'updateBudgets']);
+        Route::delete('/budget/delete/{id}', [BudgetController::class, 'deleteBudgets']);
+        // Category Budget
+        Route::get('/category-budget', [CategoryBudgetController::class, 'getCategoryBudgets']);
+        Route::post('/category-budget/create', [CategoryBudgetController::class, 'createCategoryBudgets']);
+        Route::get('/category-budget-by-budget-id/{budget_id}', [CategoryBudgetController::class, 'getCategoryBudgetsByBudgetId']);
+        Route::get('/category-budget/{id}', [CategoryBudgetController::class, 'getCategoryBudgetsById']);
+        Route::put('/category-budget/update/{id}', [CategoryBudgetController::class, 'updateCategoryBudgets']);
+        Route::delete('/category-budget/delete/{id}', [CategoryBudgetController::class, 'deleteCategoryBudgets']);
+        // List Budget
+        Route::get('/list-budget', [ListBudgetController::class, 'getListBudgets']);
+        Route::post('/list-budget/create', [ListBudgetController::class, 'createListBudgets']);
+        Route::get('/list-budget-by-category-budget-id/{categoy_budget_id}', [ListBudgetController::class, 'getListBudgetsByCategoyBudgetId']);
+        Route::get('/list-budget/{id}', [ListBudgetController::class, 'getListBudgetsById']);
+        Route::put('/list-budget/update/{id}', [ListBudgetController::class, 'updateListBudgets']);
+        Route::delete('/list-budget/delete/{id}', [ListBudgetController::class, 'deleteListBudgets']);
     });
 });
