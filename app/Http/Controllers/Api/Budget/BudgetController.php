@@ -43,20 +43,16 @@ class BudgetController extends Controller
                 'project_id' => 'required',
                 'estimated_payment' => 'required',
                 'actual_payment' => 'required',
-                'paid' => 'required',
-                'unpaid' => 'required',
-                'difference' => 'required',
-                'balance' => 'required',
             ]);
 
             $Budgets = Budgets::create([
                 'project_id' => $request->project_id,
                 'actual_payment' => $request->actual_payment,
                 'estimated_payment' => $request->estimated_payment,
-                'paid' => $request->paid,
-                'unpaid' => $request->unpaid,
-                'difference' => $request->difference,
-                'balance' => $request->balance,
+                'paid' => 0,
+                'unpaid' => 0,
+                'difference' => $request->estimated_payment -  $request->actual_payment,
+                'balance' => 0,
             ]);
 
             return response()->json(['message' => 'Create Data Successfully', 'data' => $Budgets], 200);
@@ -73,10 +69,6 @@ class BudgetController extends Controller
             $request->validate([
                 'estimated_payment' => 'required',
                 'actual_payment' => 'required',
-                'paid' => 'required',
-                'unpaid' => 'required',
-                'difference' => 'required',
-                'balance' => 'required',
             ]);
 
             // Cari data bride berdasarkan ID
@@ -88,10 +80,7 @@ class BudgetController extends Controller
             $Budgets->update([
                 'actual_payment' => $request->actual_payment,
                 'estimated_payment' => $request->estimated_payment,
-                'paid' => $request->paid,
-                'unpaid' => $request->unpaid,
-                'difference' => $request->difference,
-                'balance' => $request->balance,
+                'difference' => $request->estimated_payment - $request->actual_payment,
             ]);
 
             // Return response sukses

@@ -100,7 +100,6 @@ class AuthController extends Controller
             DB::commit();
             return response()->json([
                 'message' => 'Success Register',
-                'data' => ['user' => $user, 'project' => $project, 'event' => $event, 'bride' => $bride, 'groom' => $groom]
             ], 200);
         } catch (\Throwable $th) {
             //throw $th;
