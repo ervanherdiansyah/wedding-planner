@@ -12,6 +12,7 @@ use App\Models\Projects;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -101,11 +102,30 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Success Register',
             ], 200);
+        } catch (ValidationException $e) {
+            // Menangkap error validasi
+            $errors = [];
+            foreach ($e->errors() as $field => $messages) {
+                foreach ($messages as $message) {
+                    $errors[] = [
+                        'field' => $field,
+                        'message' => $message,
+                    ];
+                }
+            }
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $errors,
+            ], 422);
         } catch (\Throwable $th) {
-            //throw $th;
+            // Menangkap kesalahan lain
             DB::rollback();
-            // return response()->json(['message' => 'Internal Server Error'], 500);
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json([
+                'message' => 'Internal Server Error',
+                'details' => $th->getMessage(),
+            ], 500);
         }
     }
 
