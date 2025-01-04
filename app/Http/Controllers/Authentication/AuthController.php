@@ -134,9 +134,10 @@ class AuthController extends Controller
      */
     public function me()
     {
+        $user = auth()->user()->load('projects');
         return response()->json([
             'message' => 'Successfully get data user',
-            'data' => auth()->user()
+            'data' => $user
         ]);
     }
 
