@@ -19,7 +19,7 @@ class CheckRole
         $user = JWTAuth::parseToken()->authenticate();
 
         if ($user->role !== $role) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json(['message' => 'Unauthorized', 'code' => "VALIDATION_ERROR", 'details' => 'Access denied. You do not have the necessary role to perform this action.'], 401);
         }
 
         return $next($request);

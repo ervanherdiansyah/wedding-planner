@@ -48,7 +48,7 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('me', [AuthController::class, 'me']);
 
-    Route::middleware(['check.role:user'])->group(function () {
+    Route::middleware(['jwt', 'check.role:user'])->group(function () {
         // Bride
         Route::get('/bride', [BrideController::class, 'getBride']);
         Route::post('/bride/create', [BrideController::class, 'createBride']);
