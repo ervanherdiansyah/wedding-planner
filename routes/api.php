@@ -202,3 +202,11 @@ Route::group([
         Route::delete('/list-budget/delete/{id}', [ListBudgetController::class, 'deleteListBudgets']);
     });
 });
+
+Route::fallback(function () {
+    return response()->json([
+        'success' => false,
+        'message' => 'Endpoint tidak ditemukan.',
+        'data' => null
+    ], 404);
+});
