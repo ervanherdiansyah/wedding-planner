@@ -73,8 +73,8 @@ Route::group([
         // Family Member Groom
         Route::get('/family-member-groom', [FamilyMemberGroomController::class, 'getFamilyMemberGrooms']);
         Route::post('/family-member-groom/create', [FamilyMemberGroomController::class, 'creategetFamilyMemberGrooms']);
-        Route::get('/family-member-groom-by-groom-id/{groom_id}', [FamilyMemberGroomController::class, 'getgetFamilyMemberGroomsByGroomId']);
-        Route::get('/family-member-groom/{id}', [FamilyMemberGroomController::class, 'getgetFamilyMemberGroomsById']);
+        Route::get('/family-member-groom-by-groom-id/{groom_id}', [FamilyMemberGroomController::class, 'getFamilyMemberGroomsByGroomId']);
+        Route::get('/family-member-groom/{id}', [FamilyMemberGroomController::class, 'getFamilyMemberGroomsById']);
         Route::put('/family-member-groom/update/{id}', [FamilyMemberGroomController::class, 'updategetFamilyMemberGrooms']);
         Route::delete('/family-member-groom/delete/{id}', [FamilyMemberGroomController::class, 'deletegetFamilyMemberGrooms']);
         // Event
