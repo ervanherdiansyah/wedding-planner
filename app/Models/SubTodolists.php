@@ -11,6 +11,9 @@ class SubTodolists extends Model
     protected $guarded = [
         'id'
     ];
+    protected $casts = [
+        'todolist_id' => 'integer',
+    ];
     public function todolist()
     {
         return $this->belongsTo(Todolists::class, 'todolist_id');

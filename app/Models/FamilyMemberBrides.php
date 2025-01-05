@@ -11,6 +11,9 @@ class FamilyMemberBrides extends Model
     protected $guarded = [
         'id'
     ];
+    protected $casts = [
+        'bride_id' => 'integer',
+    ];
     public function bride()
     {
         return $this->belongsTo(Brides::class, 'bride_id');

@@ -11,6 +11,9 @@ class ListBudgets extends Model
     protected $guarded = [
         'id'
     ];
+    protected $casts = [
+        'category_budget_id' => 'integer',
+    ];
     public function categoryBudget()
     {
         return $this->belongsTo(CategoryBudgets::class, 'category_budget_id');

@@ -11,6 +11,9 @@ class ListVendors extends Model
     protected $guarded = [
         'id'
     ];
+    protected $casts = [
+        'project_id' => 'integer',
+    ];
     public function categoryVendor()
     {
         return $this->belongsTo(CategoryVendors::class, 'category_vendor_id');

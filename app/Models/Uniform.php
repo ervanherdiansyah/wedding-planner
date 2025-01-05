@@ -13,7 +13,9 @@ class Uniform extends Model
     protected $guarded = [
         'id'
     ];
-
+    protected $casts = [
+        'uniform_category_id' => 'integer',
+    ];
     public function uniformCateegory()
     {
         return $this->belongsTo(UniformCategories::class, 'uniform_category_id');

@@ -11,7 +11,9 @@ class Grooms extends Model
     protected $guarded = [
         'id'
     ];
-
+    protected $casts = [
+        'project_id' => 'integer',
+    ];
     public function project()
     {
         return $this->belongsTo(Projects::class, 'project_id');
