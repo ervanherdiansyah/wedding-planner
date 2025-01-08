@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class EventCommittees extends Model
 {
     use HasFactory;
-
+    protected $table = 'event_committees';
     protected $guarded = [
         'id'
     ];
