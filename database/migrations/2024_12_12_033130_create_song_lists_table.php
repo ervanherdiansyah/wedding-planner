@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             $table->string('singer_name')->nullable();
             $table->string('title')->nullable();
+            $table->time('time')->nullable();
             $table->timestamps();
         });
     }

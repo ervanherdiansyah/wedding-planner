@@ -43,12 +43,14 @@ class SongListsController extends Controller
                 'project_id' => 'required',
                 'singer_name' => 'required',
                 'title' => 'required',
+                'time' => 'required',
             ]);
 
             $SongLists = SongLists::create([
                 'project_id' => $request->project_id,
                 'singer_name' => $request->singer_name,
                 'title' => $request->title,
+                'time' => $request->time,
             ]);
 
             return response()->json(['message' => 'Create Data Successfully', 'data' => $SongLists], 200);
@@ -76,6 +78,7 @@ class SongListsController extends Controller
             $SongLists->update([
                 'singer_name' => $request->singer_name,
                 'title' => $request->title,
+                'time' => $request->time,
             ]);
 
             // Return response sukses
