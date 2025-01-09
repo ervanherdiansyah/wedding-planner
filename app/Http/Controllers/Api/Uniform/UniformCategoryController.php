@@ -41,8 +41,6 @@ class UniformCategoryController extends Controller
             //code...
             Request()->validate([
                 'project_id' => 'required',
-                'title' => 'required|string|max:255',
-                'description' => 'required|string|max:255',
             ]);
 
             $UniformCategories = UniformCategories::create([
@@ -62,10 +60,7 @@ class UniformCategoryController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'title' => 'required|string|max:255',
-                'description' => 'required|string|max:255',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $UniformCategories = UniformCategories::find($id);

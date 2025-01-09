@@ -40,17 +40,7 @@ class RundownController extends Controller
     {
         try {
             //code...
-            Request()->validate([
-                'time' => 'required',
-                'title_event' => 'required',
-                'minute' => 'required',
-                'address' => 'required',
-                'person_responsible' => 'required',
-                'status' => 'required',
-                'description' => 'required',
-                'icon' => 'required',
-                'vendor' => 'required',
-            ]);
+            Request()->validate([]);
             $Rundowns = Rundowns::create([
                 'project_id' => $request->project_id,
                 'time' => $request->time,

@@ -60,10 +60,7 @@ class FamilyMemberBrideController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'relationship' => 'required|string|max:255',
-                'name_family' => 'required|string|max:255',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $FamilyMemberBrides = FamilyMemberBrides::find($id);

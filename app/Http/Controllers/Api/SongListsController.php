@@ -41,9 +41,6 @@ class SongListsController extends Controller
             //code...
             Request()->validate([
                 'project_id' => 'required',
-                'singer_name' => 'required',
-                'title' => 'required',
-                'time' => 'required',
             ]);
 
             $SongLists = SongLists::create([
@@ -64,10 +61,7 @@ class SongListsController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'singer_name' => 'required',
-                'title' => 'required',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $SongLists = SongLists::find($id);

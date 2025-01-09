@@ -49,14 +49,7 @@ class EventController extends Controller
     {
         try {
             //code...
-            Request()->validate([
-                'image' => 'required|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
-                'bridegroom_name' => 'required',
-                'event_name' => 'required',
-                'event_datetime' => 'required',
-                'address' => 'required',
-                'description' => 'required',
-            ]);
+            Request()->validate([]);
 
             $file_name = null;
             if ($request->hasFile('image')) {
@@ -85,14 +78,7 @@ class EventController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'image' => 'nullable|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
-                'bridegroom_name' => 'required',
-                'event_name' => 'required',
-                'event_datetime' => 'required',
-                'address' => 'required',
-                'description' => 'required',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $Events = Events::find($id);

@@ -128,9 +128,7 @@ class TodolistController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'name' => 'required|string|max:255',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $Todolists = Todolists::find($id);

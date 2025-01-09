@@ -41,9 +41,6 @@ class EventCommitteController extends Controller
             //code...
             Request()->validate([
                 'project_id' => 'required',
-                'name' => 'required',
-                'role' => 'required',
-                'contact' => 'required'
             ]);
 
             $EventCommittees = EventCommittees::create([
@@ -64,11 +61,7 @@ class EventCommitteController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'name' => 'required',
-                'role' => 'required',
-                'contact' => 'required'
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $EventCommittees = EventCommittees::find($id);

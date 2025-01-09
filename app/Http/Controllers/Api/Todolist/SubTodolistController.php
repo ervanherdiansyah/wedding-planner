@@ -84,9 +84,7 @@ class SubTodolistController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'name' => 'required|string|max:255',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $SubTodolists = SubTodolists::find($id);

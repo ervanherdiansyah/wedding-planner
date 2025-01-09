@@ -41,8 +41,6 @@ class ListPhotoController extends Controller
             //code...
             Request()->validate([
                 'project_id' => 'required',
-                'name' => 'required',
-                'relationship' => 'required',
             ]);
 
             $ListPhoto = ListPhoto::create([
@@ -62,10 +60,7 @@ class ListPhotoController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'name' => 'required',
-                'relationship' => 'required',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $ListPhoto = ListPhoto::find($id);

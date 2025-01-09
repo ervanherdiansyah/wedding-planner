@@ -39,20 +39,7 @@ class ListBudgetController extends Controller
     {
         try {
             //code...
-            Request()->validate([
-                'category_budget_id' => 'required',
-                'estimated_payment' => 'required',
-                'actual_payment' => 'required',
-                'paid' => 'required',
-                'deadline' => 'required',
-                'status_payment' => 'required',
-                'first_payment' => 'required',
-                'deadline_first_payment' => 'required',
-                'status_first_payment' => 'required',
-                'second_payment' => 'required',
-                'deadline_second_payment' => 'required',
-                'status_second_payment' => 'required',
-            ]);
+            Request()->validate([]);
 
             $ListBudgets = ListBudgets::create([
                 'category_budget_id' => $request->category_budget_id,
@@ -82,20 +69,7 @@ class ListBudgetController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'estimated_payment' => 'required',
-                'actual_payment' => 'required',
-                'paid' => 'required',
-                'remaining_payment' => 'required',
-                'deadline' => 'required',
-                'status_payment' => 'required',
-                'first_payment' => 'required',
-                'deadline_first_payment' => 'required',
-                'status_first_payment' => 'required',
-                'second_payment' => 'required',
-                'deadline_second_payment' => 'required',
-                'status_second_payment' => 'required',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $ListBudgets = ListBudgets::find($id);

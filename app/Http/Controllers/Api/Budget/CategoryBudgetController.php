@@ -39,10 +39,7 @@ class CategoryBudgetController extends Controller
     {
         try {
             //code...
-            Request()->validate([
-                'budget_id' => 'required',
-                'title' => 'required',
-            ]);
+            Request()->validate([]);
 
             $CategoryBudgets = CategoryBudgets::create([
                 'budget_id' => $request->budget_id,
@@ -60,9 +57,7 @@ class CategoryBudgetController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'title' => 'required',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $CategoryBudgets = CategoryBudgets::find($id);

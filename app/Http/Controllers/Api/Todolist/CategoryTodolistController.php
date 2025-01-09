@@ -120,9 +120,7 @@ class CategoryTodolistController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'name' => 'required|string|max:255',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $CategoryTodolists = CategoryTodolists::find($id);

@@ -40,15 +40,7 @@ class ListVendorController extends Controller
     {
         try {
             //code...
-            Request()->validate([
-                'image' => 'required|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
-                'vendor_name' => 'required',
-                'vendor_price' => 'required',
-                'person_responsible' => 'required',
-                'vendor_contact' => 'required',
-                'social_media' => 'required',
-                'vendor_features' => 'required',
-            ]);
+            Request()->validate([]);
 
             $file_name = null;
             if ($request->hasFile('image')) {
@@ -78,15 +70,7 @@ class ListVendorController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'vendor_name' => 'required',
-                'vendor_price' => 'required',
-                'person_responsible' => 'required',
-                'vendor_contact' => 'required',
-                'social_media' => 'required',
-                'vendor_features' => 'required',
-                'image' => 'nullable|file|mimes:jpg,jpeg,png,svg,webp|max:2048',
-            ]);
+            $request->validate([]);
 
             // Cari data ListVendors berdasarkan ID
             $ListVendors = ListVendors::find($id);

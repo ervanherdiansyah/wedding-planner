@@ -39,13 +39,7 @@ class UniformController extends Controller
     {
         try {
             //code...
-            Request()->validate([
-                'uniform_category_id' => 'required',
-                'name' => 'required|string|max:255',
-                'status' => 'required|string|max:255',
-                'attire' => 'required|string|max:255',
-                'note' => 'required|string',
-            ]);
+            Request()->validate([]);
 
             $Uniform = Uniform::create([
                 'uniform_category_id' => $request->uniform_category_id,
@@ -66,12 +60,7 @@ class UniformController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'status' => 'required|string|max:255',
-                'attire' => 'required|string|max:255',
-                'note' => 'required|string',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $Uniform = Uniform::find($id);

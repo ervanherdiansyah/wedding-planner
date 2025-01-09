@@ -41,8 +41,6 @@ class BudgetController extends Controller
             //code...
             Request()->validate([
                 'project_id' => 'required',
-                'estimated_payment' => 'required',
-                'actual_payment' => 'required',
             ]);
 
             $Budgets = Budgets::create([
@@ -66,10 +64,7 @@ class BudgetController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'estimated_payment' => 'required',
-                'actual_payment' => 'required',
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $Budgets = Budgets::find($id);

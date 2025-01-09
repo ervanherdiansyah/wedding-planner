@@ -41,9 +41,6 @@ class VipGuestListsController extends Controller
             //code...
             Request()->validate([
                 'project_id' => 'required',
-                'name' => 'required',
-                'role' => 'required',
-                'contact' => 'required'
             ]);
 
             $VipGuestLists = VipGuestLists::create([
@@ -64,11 +61,7 @@ class VipGuestListsController extends Controller
     {
         try {
             // Validasi input
-            $request->validate([
-                'name' => 'required',
-                'role' => 'required',
-                'contact' => 'required'
-            ]);
+            $request->validate([]);
 
             // Cari data bride berdasarkan ID
             $VipGuestLists = VipGuestLists::find($id);
