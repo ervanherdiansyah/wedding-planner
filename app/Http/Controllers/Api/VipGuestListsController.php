@@ -26,6 +26,16 @@ class VipGuestListsController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+    public function getVipGuestListsByType($project_id)
+    {
+        try {
+            $VipGuestListsBride = VipGuestLists::where('project_id', $project_id)->where('type', 'bride')->get();
+            $VipGuestListsGroom = VipGuestLists::where('project_id', $project_id)->where('type', 'groom')->get();
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => ['bride' => $VipGuestListsBride, 'groom' => $VipGuestListsGroom]], 200);
+        } catch (\Exception $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
     public function getVipGuestListsById($id)
     {
         try {
@@ -48,6 +58,7 @@ class VipGuestListsController extends Controller
                 'role' => $request->role,
                 'name' => $request->name,
                 'contact' => $request->contact,
+                'type' => $request->type,
             ]);
 
             return response()->json(['message' => 'Create Data Successfully', 'data' => $VipGuestLists], 200);
@@ -73,6 +84,7 @@ class VipGuestListsController extends Controller
                 'role' => $request->role,
                 'name' => $request->name,
                 'contact' => $request->contact,
+                'type' => $request->type,
             ]);
 
             // Return response sukses

@@ -148,6 +148,7 @@ Route::group([
         Route::get('/list-photo', [ListPhotoController::class, 'getListPhoto']);
         Route::post('/list-photo/create', [ListPhotoController::class, 'createListPhoto']);
         Route::get('/list-photo-project-id/{project_id}', [ListPhotoController::class, 'getListPhotoByProjectId']);
+        Route::get('/list-photo-project-id-type/{project_id}', [ListPhotoController::class, 'getListPhotoByType']);
         Route::get('/list-photo/{id}', [ListPhotoController::class, 'getListPhotoById']);
         Route::put('/list-photo/update/{id}', [ListPhotoController::class, 'updateListPhoto']);
         Route::delete('/list-photo/delete/{id}', [ListPhotoController::class, 'deleteListPhoto']);
@@ -162,6 +163,7 @@ Route::group([
         Route::get('/vip-guest-list', [VipGuestListsController::class, 'getVipGuestLists']);
         Route::post('/vip-guest-list/create', [VipGuestListsController::class, 'createVipGuestLists']);
         Route::get('/vip-guest-list-project-id/{project_id}', [VipGuestListsController::class, 'getVipGuestListsByProjectId']);
+        Route::get('/vip-guest-list-project-id-type/{project_id}', [VipGuestListsController::class, 'getVipGuestListsByType']);
         Route::get('/vip-guest-list/{id}', [VipGuestListsController::class, 'getVipGuestListsById']);
         Route::put('/vip-guest-list/update/{id}', [VipGuestListsController::class, 'updateVipGuestLists']);
         Route::delete('/vip-guest-list/delete/{id}', [VipGuestListsController::class, 'deleteVipGuestLists']);
