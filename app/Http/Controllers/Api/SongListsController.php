@@ -28,7 +28,8 @@ class SongListsController extends Controller
             // Jika ada parameter pencarian, tambahkan ke query
             if ($search) {
                 $query->where('title', 'like', "%{$search}%")
-                    ->orWhere('singer_name', 'like', "%{$search}%");
+                    ->orWhere('singer_name', 'like', "%{$search}%")
+                    ->orWhere('time', 'like', "%{$search}%");
             }
 
             $SongLists = $query->get();

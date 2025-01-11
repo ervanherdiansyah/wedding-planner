@@ -28,7 +28,8 @@ class EventCommitteController extends Controller
             // Jika ada parameter pencarian, tambahkan ke query
             if ($search) {
                 $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('role', 'like', "%{$search}%");
+                    ->orWhere('role', 'like', "%{$search}%")
+                    ->orWhere('contact', 'like', "%{$search}%");
             }
 
             $EventCommittees = $query->get();
