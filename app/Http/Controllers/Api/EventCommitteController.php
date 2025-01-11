@@ -17,10 +17,21 @@ class EventCommitteController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function getEventCommitteesByProjectId($project_id)
+    public function getEventCommitteesByProjectId($project_id, Request $request)
     {
         try {
-            $EventCommittees = EventCommittees::where('project_id', $project_id)->get();
+            // Ambil parameter pencarian jika ada
+            $search = $request->query('search');
+
+            $query = EventCommittees::where('project_id', $project_id);
+
+            // Jika ada parameter pencarian, tambahkan ke query
+            if ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('role', 'like', "%{$search}%");
+            }
+
+            $EventCommittees = $query->get();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $EventCommittees], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);

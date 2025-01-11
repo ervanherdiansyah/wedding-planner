@@ -17,10 +17,21 @@ class SongListsController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function getSongListsByProjectId($project_id)
+    public function getSongListsByProjectId($project_id, Request $request)
     {
         try {
-            $SongLists = SongLists::where('project_id', $project_id)->get();
+            // Ambil parameter pencarian jika ada
+            $search = $request->query('search');
+
+            $query = SongLists::where('project_id', $project_id);
+
+            // Jika ada parameter pencarian, tambahkan ke query
+            if ($search) {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('singer_name', 'like', "%{$search}%");
+            }
+
+            $SongLists = $query->get();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $SongLists], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
