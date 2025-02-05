@@ -158,10 +158,13 @@ class CategoryTodolistController extends Controller
         try {
             $user = Auth::user();
             $project = Projects::where('user_id', $user->id)->first();
+
             if (!$project) {
                 return response()->json(['message' => 'Project not found for this user'], 404);
             }
-            $SubTodolists = CategoryTodolists::where('project_id', $project->id)
+
+            // Ambil semua data todolist beserta subtodolist
+            $todolist = CategoryTodolists::where('project_id', $project->id)
                 ->with(['todolist.subtodolist']) // Nested eager loading
                 ->get()
                 ->map(function ($category) {
@@ -175,25 +178,52 @@ class CategoryTodolistController extends Controller
                                 'todolist_id' => $todolist->id,
                                 'todolist_name' => $todolist->name,
                                 'status' => $todolist->status,
-                                'subtodolists' => $todolist->subtodolist
-                                    ? $todolist->subtodolist->map(function ($subtodolist) {
-                                        return [
-                                            'subtodolist_id' => $subtodolist->id,
-                                            'subtodolist_name' => $subtodolist->name,
-                                            'status' => $subtodolist->status,
-                                        ];
-                                    })
-                                    : [],
+                                'subtodolists' => $todolist->subtodolist->map(function ($subtodolist) {
+                                    return [
+                                        'subtodolist_id' => $subtodolist->id,
+                                        'subtodolist_name' => $subtodolist->name,
+                                        'status' => $subtodolist->status,
+                                    ];
+                                }),
                             ];
                         }),
                     ];
                 });
 
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $SubTodolists], 200);
-        } catch (\Exception $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+            // Hitung status completed
+            $completedCategories = CategoryTodolists::where('project_id', $project->id)->where('status', 1)->count();
+            $completedTodolists = Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->where('status', 1)->count();
+            $completedSubTodolists = SubTodolists::whereIn('todolist_id', Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->pluck('id'))->where('status', 1)->count();
+            $totalCompleted = $completedCategories + $completedTodolists + $completedSubTodolists;
+
+            // Hitung status not completed
+            $notCompletedCategories = CategoryTodolists::where('project_id', $project->id)->where('status', 0)->count();
+            $notCompletedTodolists = Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->where('status', 0)->count();
+            $notCompletedSubTodolists = SubTodolists::whereIn('todolist_id', Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->pluck('id'))->where('status', 0)->count();
+            $totalNotCompleted = $notCompletedCategories + $notCompletedTodolists + $notCompletedSubTodolists;
+
+            // Return JSON response
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'datas' => $todolist,
+                'statusCompleted' => [
+                    'completed_categories' => $completedCategories,
+                    'completed_todolists' => $completedTodolists,
+                    'completed_subtodolists' => $completedSubTodolists,
+                    'total_completed' => $totalCompleted,
+                ],
+                'statusNotCompleted' => [
+                    'not_completed_categories' => $notCompletedCategories,
+                    'not_completed_todolists' => $notCompletedTodolists,
+                    'not_completed_subtodolists' => $notCompletedSubTodolists,
+                    'total_not_completed' => $totalNotCompleted,
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
 
 
     public function countCompletedStatuses()
