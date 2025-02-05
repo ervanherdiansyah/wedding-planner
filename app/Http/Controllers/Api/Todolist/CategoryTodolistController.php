@@ -205,7 +205,7 @@ class CategoryTodolistController extends Controller
             // Return JSON response
             return response()->json([
                 'message' => 'Fetch Data Successfully',
-                'datas' => $todolist,
+                'data' => $todolist,
                 'statusCompleted' => [
                     'completed_categories' => $completedCategories,
                     'completed_todolists' => $completedTodolists,
