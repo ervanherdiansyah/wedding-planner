@@ -172,17 +172,17 @@ class CategoryTodolistController extends Controller
                         'category_id' => $category->id,
                         'project_id' => $category->project_id,
                         'name' => $category->name,
-                        'status' => $category->status,
+                        'status' => (bool) $category->status,
                         'todolists' => $category->todolist->map(function ($todolist) {
                             return [
                                 'todolist_id' => $todolist->id,
                                 'todolist_name' => $todolist->name,
-                                'status' => $todolist->status,
+                                'status' => (bool) $todolist->status,
                                 'subtodolists' => $todolist->subtodolist->map(function ($subtodolist) {
                                     return [
                                         'subtodolist_id' => $subtodolist->id,
                                         'subtodolist_name' => $subtodolist->name,
-                                        'status' => $subtodolist->status,
+                                        'status' => (bool) $subtodolist->status,
                                     ];
                                 }),
                             ];
