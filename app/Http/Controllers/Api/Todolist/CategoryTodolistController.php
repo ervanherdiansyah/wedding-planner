@@ -225,15 +225,15 @@ class CategoryTodolistController extends Controller
                 'message' => 'Fetch Data Successfully',
                 'data' => $todolist,
                 'statusCompleted' => [
-                    'completed_categories' => $completedCategories,
-                    'completed_todolists' => $completedTodolists,
-                    'completed_subtodolists' => $completedSubTodolists,
+                    // 'completed_categories' => $completedCategories,
+                    // 'completed_todolists' => $completedTodolists,
+                    // 'completed_subtodolists' => $completedSubTodolists,
                     'total_completed' => $totalCompleted,
                 ],
                 'statusNotCompleted' => [
-                    'not_completed_categories' => $notCompletedCategories,
-                    'not_completed_todolists' => $notCompletedTodolists,
-                    'not_completed_subtodolists' => $notCompletedSubTodolists,
+                    // 'not_completed_categories' => $notCompletedCategories,
+                    // 'not_completed_todolists' => $notCompletedTodolists,
+                    // 'not_completed_subtodolists' => $notCompletedSubTodolists,
                     'total_not_completed' => $totalNotCompleted,
                 ],
             ], 200);
