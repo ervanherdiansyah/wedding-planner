@@ -163,33 +163,6 @@ class CategoryTodolistController extends Controller
                 return response()->json(['message' => 'Project not found for this user'], 404);
             }
 
-            // Ambil semua data todolist beserta subtodolist
-            $todolist = CategoryTodolists::where('project_id', $project->id)
-                ->with(['todolist.subtodolist']) // Nested eager loading
-                ->get()
-                ->map(function ($category) {
-                    return [
-                        'category_id' => $category->id,
-                        'project_id' => $category->project_id,
-                        'name' => $category->name,
-                        'status' => (bool) $category->status,
-                        'todolists' => $category->todolist->map(function ($todolist) {
-                            return [
-                                'todolist_id' => $todolist->id,
-                                'todolist_name' => $todolist->name,
-                                'status' => (bool) $todolist->status,
-                                'subtodolists' => $todolist->subtodolist->map(function ($subtodolist) {
-                                    return [
-                                        'subtodolist_id' => $subtodolist->id,
-                                        'subtodolist_name' => $subtodolist->name,
-                                        'status' => (bool) $subtodolist->status,
-                                    ];
-                                }),
-                            ];
-                        }),
-                    ];
-                });
-
             // Hitung status completed
             $completedCategories = CategoryTodolists::where('project_id', $project->id)->where('status', 1)->count();
             $completedTodolists = Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->where('status', 1)->count();
@@ -201,6 +174,45 @@ class CategoryTodolistController extends Controller
             $notCompletedTodolists = Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->where('status', 0)->count();
             $notCompletedSubTodolists = SubTodolists::whereIn('todolist_id', Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->pluck('id'))->where('status', 0)->count();
             $totalNotCompleted = $notCompletedCategories + $notCompletedTodolists + $notCompletedSubTodolists;
+            // Ambil semua data todolist beserta subtodolist
+            $todolist = CategoryTodolists::where('project_id', $project->id)
+                ->with(['todolist.subtodolist']) // Nested eager loading
+                ->get()
+                ->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'project_id' => $category->project_id,
+                        'name' => $category->name,
+                        'status' => (bool) $category->status,
+                        'total_todolists' => $category->count(),
+                        'total_stutus_completed' => $category->where('status', 1)->count(),
+                        'total_stutus_notcompleted' => $category->where('status', 0)->count(),
+                        'todolists' => $category->todolist->map(function ($todolist) {
+                            return [
+                                'id' => $todolist->id,
+                                'category_todolist_id' => $todolist->category_todolist_id,
+                                'todolist_name' => $todolist->name,
+                                'status' => (bool) $todolist->status,
+                                'total_subtodolists' => $todolist->count(),
+                                'total_stutus_completed' => $todolist->where('status', 1)->count(),
+                                'total_stutus_notcompleted' => $todolist->where('status', 0)->count(),
+                                'subtodolists' => $todolist->subtodolist->map(function ($subtodolist) {
+                                    return [
+                                        'id' => $subtodolist->id,
+                                        'todolist_id' => $subtodolist->todolist_id,
+                                        'subtodolist_name' => $subtodolist->name,
+                                        'status' => (bool) $subtodolist->status,
+                                        'total_subtodolists' => $subtodolist->count(),
+                                        'total_stutus_completed' => $subtodolist->where('status', 1)->count(),
+                                        'total_stutus_notcompleted' => $subtodolist->where('status', 0)->count(),
+                                    ];
+                                }),
+                            ];
+                        }),
+                    ];
+                });
+
+
 
             // Return JSON response
             return response()->json([
