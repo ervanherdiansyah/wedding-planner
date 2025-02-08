@@ -179,38 +179,44 @@ class CategoryTodolistController extends Controller
                 ->with(['todolist.subtodolist']) // Nested eager loading
                 ->get()
                 ->map(function ($category) {
+                    $totalTodolists = $category->todolist->count();
+                    $totalCompletedTodolists = $category->todolist->where('status', 1)->count();
+                    $totalNotCompletedTodolists = $category->todolist->where('status', 0)->count();
+
                     return [
                         'id' => $category->id,
                         'project_id' => $category->project_id,
                         'name' => $category->name,
                         'status' => (bool) $category->status,
-                        'total_todolists' => $category->count(),
-                        'total_stutus_completed' => $category->where('status', 1)->count(),
-                        'total_stutus_notcompleted' => $category->where('status', 0)->count(),
+                        'total_todolists' => $totalTodolists,
+                        'total_status_completed' => $totalCompletedTodolists,
+                        'total_status_notcompleted' => $totalNotCompletedTodolists,
                         'todolists' => $category->todolist->map(function ($todolist) {
+                            $totalSubtodolists = $todolist->subtodolist->count();
+                            $totalCompletedSubtodolists = $todolist->subtodolist->where('status', 1)->count();
+                            $totalNotCompletedSubtodolists = $todolist->subtodolist->where('status', 0)->count();
+
                             return [
                                 'id' => $todolist->id,
                                 'category_todolist_id' => $todolist->category_todolist_id,
                                 'todolist_name' => $todolist->name,
                                 'status' => (bool) $todolist->status,
-                                'total_subtodolists' => $todolist->count(),
-                                'total_stutus_completed' => $todolist->where('status', 1)->count(),
-                                'total_stutus_notcompleted' => $todolist->where('status', 0)->count(),
+                                'total_subtodolists' => $totalSubtodolists,
+                                'total_status_completed' => $totalCompletedSubtodolists,
+                                'total_status_notcompleted' => $totalNotCompletedSubtodolists,
                                 'subtodolists' => $todolist->subtodolist->map(function ($subtodolist) {
                                     return [
                                         'id' => $subtodolist->id,
                                         'todolist_id' => $subtodolist->todolist_id,
                                         'subtodolist_name' => $subtodolist->name,
                                         'status' => (bool) $subtodolist->status,
-                                        'total_subtodolists' => $subtodolist->count(),
-                                        'total_stutus_completed' => $subtodolist->where('status', 1)->count(),
-                                        'total_stutus_notcompleted' => $subtodolist->where('status', 0)->count(),
                                     ];
                                 }),
                             ];
                         }),
                     ];
                 });
+
 
 
 
