@@ -18,7 +18,7 @@ class ListVendorController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function getListVendorsByProjectId($category_vendor_id)
+    public function getListVendorsByCategoryVendorId($category_vendor_id)
     {
         try {
             $ListVendors = ListVendors::where('category_vendor_id', $category_vendor_id)->get();

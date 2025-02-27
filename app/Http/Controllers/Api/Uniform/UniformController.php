@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\Uniform;
 
 use App\Http\Controllers\Controller;
+use App\Models\Projects;
 use App\Models\Uniform;
+use App\Models\UniformCategories;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UniformController extends Controller
 {
@@ -17,11 +20,36 @@ class UniformController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function getUniformByProjectId($project_id)
     {
         try {
-            $Uniform = Uniform::where('project_id', $project_id)->get();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Uniform], 200);
+            // $user = Auth::user();
+            // $project = Projects::where('user_id', $user->id)->first();
+            $total_category = UniformCategories::where('project_id', $project_id)->count();
+            $total_uniform = Uniform::where('project_id', $project_id)->count();
+            $uniform = UniformCategories::where('project_id', $project_id)
+                ->with(['uniform']) // Nested eager loading
+                ->get()
+                ->map(function ($category) {
+                    $delivered_items = $category->uniform->where('status', 'Sudah Diberikan')->count();
+                    return [
+                        'category_id' => $category->id,
+                        'project_id' => $category->project_id,
+                        'category_name' => $category->title,
+                        "delivered_items" => $delivered_items,
+                        'uniform' => $category->uniform->map(function ($uniform) {
+                            return [
+                                'uniform_id' => $uniform->id,
+                                'uniform_name' => $uniform->name,
+                                'uniform_status' => $uniform->status,
+                                'uniform_attire' => $uniform->attire,
+                                'uniform_note' => $uniform->note,
+                            ];
+                        }),
+                    ];
+                });
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $uniform, 'total_category' => $total_category, "total_uniform" => $total_uniform], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
