@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Uniform extends Model
 {
     use HasFactory;
-    protected $table = "unifoms";
+    protected $table = "uniforms";
 
     protected $guarded = [
         'id'
