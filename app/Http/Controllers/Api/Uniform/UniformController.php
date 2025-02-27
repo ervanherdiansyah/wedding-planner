@@ -21,7 +21,7 @@ class UniformController extends Controller
         }
     }
 
-    public function getUniformByProjectId($project_id)
+    public function getUniformByUniformCategoryId($project_id)
     {
         try {
             // $user = Auth::user();
