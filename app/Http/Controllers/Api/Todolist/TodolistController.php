@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Todolist;
 use App\Http\Controllers\Controller;
 use App\Models\CategoryTodolists;
 use App\Models\Projects;
+use App\Models\SubTodolists;
 use App\Models\Todolists;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -140,6 +141,28 @@ class TodolistController extends Controller
                 'name' => $request->name,
                 'status' => $request->status,
             ]);
+
+            // Jika status todolist diubah menjadi true, ubah status semua subtodolist menjadi true
+            if ($Todolists->status == 1) {
+                $subTodolists = SubTodolists::where('todolist_id', $Todolists->id)->get();
+                foreach ($subTodolists as $subTodolist) {
+                    $subTodolist->update(['status' => 1]);
+                }
+            }
+
+            $category = CategoryTodolists::find($Todolists->category_todolist_id);
+
+            if ($category) {
+                // Periksa apakah semua todolist dalam kategori memiliki status true
+                $allCompleted = $category->todolist->every(function ($todolist) {
+                    return $todolist->status == 1; // Cek apakah semua todolist statusnya true
+                });
+
+                // Jika semua todolist memiliki status true, update status kategori menjadi true
+                if ($allCompleted) {
+                    $category->update(['status' => 1]);
+                }
+            }
 
             // Return response sukses
             return response()->json(['message' => 'Updated data successfully', 'data' => $Todolists], 200);

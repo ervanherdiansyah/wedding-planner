@@ -26,8 +26,6 @@ class UniformController extends Controller
         try {
             // $user = Auth::user();
             // $project = Projects::where('user_id', $user->id)->first();
-            $total_category = UniformCategories::where('project_id', $project_id)->count();
-            $total_uniform = Uniform::where('project_id', $project_id)->count();
             $uniform = UniformCategories::where('project_id', $project_id)
                 ->with(['uniform']) // Nested eager loading
                 ->get()
@@ -37,6 +35,7 @@ class UniformController extends Controller
                         'category_id' => $category->id,
                         'project_id' => $category->project_id,
                         'category_name' => $category->title,
+                        "total_uniform" => $category->uniform->count(),
                         "delivered_items" => $delivered_items,
                         'uniform' => $category->uniform->map(function ($uniform) {
                             return [
@@ -49,7 +48,9 @@ class UniformController extends Controller
                         }),
                     ];
                 });
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $uniform, 'total_category' => $total_category, "total_uniform" => $total_uniform], 200);
+            $total_category = UniformCategories::where('project_id', $project_id)->count();
+
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $uniform, 'total_category' => $total_category], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }

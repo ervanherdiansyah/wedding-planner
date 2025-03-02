@@ -133,6 +133,23 @@ class CategoryTodolistController extends Controller
                 'status' => $request->status,
             ]);
 
+            // Jika status CategoryTodolist diubah menjadi true, ubah semua Todolist dan SubTodolist menjadi true
+            if ($CategoryTodolists->status == 1) {
+                // Ambil semua Todolist yang terkait dengan CategoryTodolist ini
+                $todolists = $CategoryTodolists->todolist;
+
+                foreach ($todolists as $todolist) {
+                    // Ubah status Todolist menjadi true
+                    $todolist->update(['status' => 1]);
+
+                    // Ubah status semua SubTodolist yang terkait dengan Todolist ini menjadi true
+                    $subTodolists = $todolist->subtodolist;
+                    foreach ($subTodolists as $subTodolist) {
+                        $subTodolist->update(['status' => 1]);
+                    }
+                }
+            }
+
             // Return response sukses
             return response()->json(['message' => 'Updated data successfully', 'data' => $CategoryTodolists], 200);
         } catch (\Throwable $th) {

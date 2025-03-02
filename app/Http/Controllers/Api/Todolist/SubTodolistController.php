@@ -97,6 +97,31 @@ class SubTodolistController extends Controller
                 'status' => $request->status,
             ]);
 
+            // Update status Todolist jika semua subtodolist sudah selesai
+            $todolist = Todolists::find($SubTodolists->todolist_id);
+            if ($todolist) {
+                // Cek apakah semua subtodolist di todolist sudah selesai
+                $allCompleted = $todolist->subtodolist->every(function ($subTodolist) {
+                    return $subTodolist->status === 1; // cek apakah semua subtodolist selesai
+                });
+
+                // Update status todolist berdasarkan status semua subtodolist
+                $todolist->status = $allCompleted ? 1 : 0;
+                $todolist->save();
+
+                // Update status category_todolist jika semua todolist sudah selesai
+                $categoryTodolist = CategoryTodolists::find($todolist->category_todolist_id);
+                if ($categoryTodolist) {
+                    $allCompleted = $categoryTodolist->todolist->every(function ($todolist) {
+                        return $todolist->status === 1; // cek apakah semua todolist selesai
+                    });
+
+                    // Update status category_todolist berdasarkan status semua todolist
+                    $categoryTodolist->status = $allCompleted ? 1 : 0;
+                    $categoryTodolist->save();
+                }
+            }
+
             // Return response sukses
             return response()->json(['message' => 'Updated data successfully', 'data' => $SubTodolists], 200);
         } catch (\Throwable $th) {
