@@ -50,6 +50,7 @@ class HandoverBudgetItemController extends Controller
                 'category' => $request->category,
                 'purchase_method' => $request->purchase_method,
                 'price' => $request->price,
+                'detail' => $request->detail,
                 'status' => 0,
                 'purchase_date' => $request->purchase_date,
             ]);
@@ -80,25 +81,22 @@ class HandoverBudgetItemController extends Controller
             if (!$HandoverBudgetItem) {
                 return response()->json(['message' => 'Budget not found'], 404);
             }
-            // Update data bride
+            $oldPrice = $HandoverBudgetItem->price;
             $HandoverBudgetItem->update([
                 'name' => $request->name,
                 'category' => $request->category,
                 'purchase_method' => $request->purchase_method,
                 'price' => $request->price,
                 'status' => $request->status,
+                'detail' => $request->detail,
                 'purchase_date' => $request->purchase_date,
             ]);
-
-            $oldPrice = $HandoverBudgetItem->price;
-
             $HandoverBudget = HandoverBudget::find($HandoverBudgetItem->handover_budgets_id);
-            if ($request->has('price')) {
-                if ($HandoverBudgetItem->category == 'male') {
-                    $HandoverBudget->used_budget_male = $HandoverBudget->used_budget_male - $oldPrice + $HandoverBudgetItem->price;
-                } else {
-                    $HandoverBudget->used_budget_female = $HandoverBudget->used_budget_female - $oldPrice + $HandoverBudgetItem->price;
-                }
+            if ($HandoverBudgetItem->category == 'male') {
+                $HandoverBudget->used_budget_male = $HandoverBudget->used_budget_male - $oldPrice + $HandoverBudgetItem->price;
+                $HandoverBudget->save();
+            } else {
+                $HandoverBudget->used_budget_female = $HandoverBudget->used_budget_female - $oldPrice + $HandoverBudgetItem->price;
                 $HandoverBudget->save();
             }
             // Return response sukses
@@ -112,7 +110,18 @@ class HandoverBudgetItemController extends Controller
     public function deleteHandoverBudgetItem($id)
     {
         try {
-            HandoverBudgetItem::where('id', $id)->first()->delete();
+            $item = HandoverBudgetItem::where('id', $id)->first();
+            $HandoverBudget = HandoverBudget::find($item->handover_budgets_id);
+
+            // Kurangi dari used budget
+            if ($item->category == 'male') {
+                $HandoverBudget->used_budget_male -= $item->price;
+            } else {
+                $HandoverBudget->used_budget_female -= $item->price;
+            }
+            $HandoverBudget->save();
+            $item->delete();
+
             return response()->json(['message' => 'Delete Data Successfully'], 200);
         } catch (\Throwable $th) {
             //throw $th;
