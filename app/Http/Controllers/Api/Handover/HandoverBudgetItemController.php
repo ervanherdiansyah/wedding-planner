@@ -164,7 +164,7 @@ class HandoverBudgetItemController extends Controller
                                 'purchase_date' => $item->purchase_date,
                                 'status' => $item->status,
                             ];
-                        }),
+                        })->values(),
                         'HandoverBudgetItem_female' => $FemaleItems->map(function ($item) {
                             return [
                                 'id' => $item->id,

@@ -40,7 +40,7 @@ class UniformController extends Controller
                         'uniform' => $category->uniform->map(function ($uniform) {
                             return [
                                 'id' => $uniform->id,
-                                'category_id' => $uniform->category_id,
+                                'category_id' => $uniform->uniform_category_id,
                                 'uniform_name' => $uniform->name,
                                 'uniform_status' => $uniform->status,
                                 'uniform_attire' => $uniform->attire,
