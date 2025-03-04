@@ -32,14 +32,15 @@ class UniformController extends Controller
                 ->map(function ($category) {
                     $delivered_items = $category->uniform->where('status', 'Sudah Diberikan')->count();
                     return [
-                        'category_id' => $category->id,
+                        'id' => $category->id,
                         'project_id' => $category->project_id,
                         'category_name' => $category->title,
                         "total_uniform" => $category->uniform->count(),
                         "delivered_items" => $delivered_items,
                         'uniform' => $category->uniform->map(function ($uniform) {
                             return [
-                                'uniform_id' => $uniform->id,
+                                'id' => $uniform->id,
+                                'category_id' => $uniform->category_id,
                                 'uniform_name' => $uniform->name,
                                 'uniform_status' => $uniform->status,
                                 'uniform_attire' => $uniform->attire,
