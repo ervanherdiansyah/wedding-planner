@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetItemController;
 use App\Http\Controllers\Api\ListPhotoController;
+use App\Http\Controllers\Api\OverviewController;
 use App\Http\Controllers\Api\RundownController;
 use App\Http\Controllers\Api\SongListsController;
 use App\Http\Controllers\Api\Todolist\CategoryTodolistController;
@@ -47,6 +48,9 @@ Route::group([
     Route::get('me', [AuthController::class, 'me']);
 
     Route::middleware(['jwt', 'check.role:user'])->group(function () {
+        // Overview
+        Route::get('/overview/{project_id}', [OverviewController::class, 'getOverview']);
+
         // Bride
         Route::get('/bride', [BrideController::class, 'getBride']);
         Route::post('/bride/create', [BrideController::class, 'createBride']);

@@ -184,13 +184,13 @@ class CategoryTodolistController extends Controller
             $completedCategories = CategoryTodolists::where('project_id', $project->id)->where('status', 1)->count();
             $completedTodolists = Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->where('status', 1)->count();
             $completedSubTodolists = SubTodolists::whereIn('todolist_id', Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->pluck('id'))->where('status', 1)->count();
-            $totalCompleted = $completedCategories + $completedTodolists + $completedSubTodolists;
+            $totalCompleted = $completedSubTodolists;
 
             // Hitung status not completed
             $notCompletedCategories = CategoryTodolists::where('project_id', $project->id)->where('status', 0)->count();
             $notCompletedTodolists = Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->where('status', 0)->count();
             $notCompletedSubTodolists = SubTodolists::whereIn('todolist_id', Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->pluck('id'))->where('status', 0)->count();
-            $totalNotCompleted = $notCompletedCategories + $notCompletedTodolists + $notCompletedSubTodolists;
+            $totalNotCompleted = $notCompletedSubTodolists;
             // Ambil semua data todolist beserta subtodolist
             $todolist = CategoryTodolists::where('project_id', $project->id)
                 ->with(['todolist.subtodolist']) // Nested eager loading
@@ -292,7 +292,7 @@ class CategoryTodolistController extends Controller
             )->where('status', 1)->count();
 
             // Total semua
-            $totalCompleted = $completedCategories + $completedTodolists + $completedSubTodolists;
+            $totalCompleted = $completedSubTodolists;
 
             return response()->json([
                 'message' => 'Count Data Successfully',
@@ -338,7 +338,7 @@ class CategoryTodolistController extends Controller
             )->where('status', 0)->count();
 
             // Total semua
-            $totalnotCompleted = $notcompletedCategories + $notcompletedTodolists + $notcompletedSubTodolists;
+            $totalnotCompleted = $notcompletedSubTodolists;
 
             return response()->json([
                 'message' => 'Count Data Successfully',
