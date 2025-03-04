@@ -152,7 +152,7 @@ class HandoverBudgetItemController extends Controller
                         "buy_HandoverBudgetItem_female" => $FemaleItems->where('status', true)->count(),
 
                         // Data berdasarkan kategori
-                        'HandoverBudgetItem_male' => $MaleItems->map(function ($item) {
+                        'HandoverBudgetItemFemale' => $FemaleItems->map(function ($item) {
                             return [
                                 'id' => $item->id,
                                 'handover_budgets_id' => $item->handover_budgets_id,
@@ -165,7 +165,7 @@ class HandoverBudgetItemController extends Controller
                                 'status' => $item->status,
                             ];
                         })->values(),
-                        'HandoverBudgetItem_female' => $FemaleItems->map(function ($item) {
+                        'HandoverBudgetItemMale' => $MaleItems->map(function ($item) {
                             return [
                                 'id' => $item->id,
                                 'handover_budgets_id' => $item->handover_budgets_id,
@@ -177,7 +177,7 @@ class HandoverBudgetItemController extends Controller
                                 'purchase_date' => $item->purchase_date,
                                 'status' => $item->status,
                             ];
-                        }),
+                        })->values(),
                     ];
                 });
 
