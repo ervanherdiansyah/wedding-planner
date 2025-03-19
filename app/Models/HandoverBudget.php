@@ -14,6 +14,10 @@ class HandoverBudget extends Model
     ];
     protected $casts = [
         'project_id' => 'integer',
+        'male_budget' => 'integer',
+        'female_budget' => 'integer',
+        'used_budget_male' => 'integer',
+        'used_budget_female' => 'integer',
     ];
     public function project()
     {

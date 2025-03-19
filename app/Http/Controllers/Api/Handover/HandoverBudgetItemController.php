@@ -147,6 +147,7 @@ class HandoverBudgetItemController extends Controller
                     // Return data yang diperlukan
                     return [
                         'id' => $HandoverBudget->id,
+                        'project_id' => $HandoverBudget->project_id,
                         'male_budget' => $HandoverBudget->male_budget,
                         'female_budget' => $HandoverBudget->female_budget,
                         "used_budget_male" => $HandoverBudget->used_budget_male,

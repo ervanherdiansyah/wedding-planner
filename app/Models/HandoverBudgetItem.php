@@ -15,6 +15,7 @@ class HandoverBudgetItem extends Model
     protected $casts = [
         'handover_budgets_id' => 'integer',
         'status' => 'integer',
+        'price' => 'integer',
     ];
     public function HandoverBudget()
     {
