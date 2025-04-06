@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Handover;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brides;
+use App\Models\Grooms;
 use App\Models\HandoverBudget;
 use Illuminate\Http\Request;
 
@@ -20,12 +22,39 @@ class HandoverBudgetController extends Controller
     public function getHandoverBudgetByProjectId($project_id)
     {
         try {
-            $HandoverBudget = HandoverBudget::where('project_id', $project_id)->get();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $HandoverBudget], 200);
+            $bride = Brides::where('project_id', $project_id)->first();
+            $groom = Grooms::where('project_id', $project_id)->first();
+            $HandoverBudget = HandoverBudget::where('project_id', $project_id)->first();
+
+            if (!$HandoverBudget) {
+                return response()->json(['message' => 'Handover budget not found'], 404);
+            }
+
+            $diferent_male = $HandoverBudget->male_budget - $HandoverBudget->used_budget_male;
+            $diferent_female = $HandoverBudget->female_budget - $HandoverBudget->used_budget_female;
+            $total_budget = $HandoverBudget->male_budget + $HandoverBudget->female_budget;
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => [
+                    'id' => $HandoverBudget->id,
+                    'project_id' => $HandoverBudget->project_id,
+                    'total_budget' => $total_budget,
+                    'male_budget' => $HandoverBudget->male_budget,
+                    'female_budget' => $HandoverBudget->female_budget,
+                    'used_budget_male' => $HandoverBudget->used_budget_male,
+                    'used_budget_female' => $HandoverBudget->used_budget_female,
+                    'diferent_male' => $diferent_male,
+                    'diferent_female' => $diferent_female,
+                    'bride' => $bride ? $bride->name_bride : null,
+                    'groom' => $groom ? $groom->name_groom : null,
+                ]
+            ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function getHandoverBudgetById($id)
     {
         try {

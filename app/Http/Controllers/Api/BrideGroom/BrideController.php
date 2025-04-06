@@ -21,7 +21,7 @@ class BrideController extends Controller
     public function getBrideByProjectId($project_id)
     {
         try {
-            $bride = Brides::where('project_id', $project_id)->get();
+            $bride = Brides::where('project_id', $project_id)->first();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $bride], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);

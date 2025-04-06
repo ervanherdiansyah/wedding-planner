@@ -18,7 +18,7 @@ class HandoverBudgetItemController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function getHandoverBudgetItemByHandoverBudgetId($handover_budgets_id)
+    public function getHandoverBudgetItemByHandoverBudgetsId($handover_budgets_id)
     {
         try {
             $HandoverBudgetItem = HandoverBudgetItem::where('handover_budgets_id', $handover_budgets_id)->get();
@@ -129,32 +129,21 @@ class HandoverBudgetItemController extends Controller
         }
     }
 
-    public function getHandoverBudgetItemByProjectId($project_id)
+    public function getHandoverBudgetItemByHandoverBudgetId($handover_budget_id)
     {
         try {
             // $user = Auth::user();
             // $project = Projects::where('user_id', $user->id)->first();
-            $HandoverBudget = HandoverBudget::where('project_id', $project_id)
+            $HandoverBudget = HandoverBudget::where('id', $handover_budget_id)
                 ->with(['HandoverBudgetItem']) // Nested eager loading
                 ->get()
                 ->map(function ($HandoverBudget) {
                     // Filter berdasarkan kategori
                     $MaleItems = $HandoverBudget->HandoverBudgetItem->where('category', 'male');
                     $FemaleItems = $HandoverBudget->HandoverBudgetItem->where('category', 'female');
-                    $diferent_male = $HandoverBudget->male_budget - $HandoverBudget->used_budget_male;
-                    $diferent_female = $HandoverBudget->female_budget - $HandoverBudget->used_budget_female;
 
                     // Return data yang diperlukan
                     return [
-                        'id' => $HandoverBudget->id,
-                        'project_id' => $HandoverBudget->project_id,
-                        'male_budget' => $HandoverBudget->male_budget,
-                        'female_budget' => $HandoverBudget->female_budget,
-                        "used_budget_male" => $HandoverBudget->used_budget_male,
-                        "used_budget_female" => $HandoverBudget->used_budget_female,
-                        "diferent_male" => $diferent_male,
-                        "diferent_female" => $diferent_female,
-
                         // Total dan yang sudah dibeli berdasarkan kategori
                         "total_HandoverBudgetItem_male" => $MaleItems->count(),
                         "buy_HandoverBudgetItem_male" => $MaleItems->where('status', true)->count(),
