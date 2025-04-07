@@ -43,19 +43,13 @@ class ListBudgetController extends Controller
 
             $ListBudgets = ListBudgets::create([
                 'category_budget_id' => $request->category_budget_id,
+                'title' => $request->title,
                 'actual_payment' => $request->actual_payment,
                 'estimated_payment' => $request->estimated_payment,
                 'difference' => $request->estimated_payment - $request->actual_payment,
-                'paid' => $request->paid,
-                'remaining_payment' => $request->estimated_payment - $request->paid - $request->first_payment - $request->second_payment,
-                'deadline' => $request->deadline,
-                'status_payment' => $request->status_payment,
-                'first_payment' => $request->first_payment,
-                'deadline_first_payment' => $request->deadline_first_payment,
-                'status_first_payment' => $request->status_first_payment,
-                'second_payment' => $request->second_payment,
-                'deadline_second_payment' => $request->deadline_second_payment,
-                'status_second_payment' => $request->status_second_payment,
+                'paid' => 0,
+                'remaining_payment' => $request->actual_payment - $request->paid,
+                'status' => 0,
             ]);
 
             return response()->json(['message' => 'Create Data Successfully', 'data' => $ListBudgets], 200);
@@ -78,20 +72,10 @@ class ListBudgetController extends Controller
             }
             // Update data bride
             $ListBudgets->update([
-                'category_budget_id' => $request->category_budget_id,
+                'title' => $request->title,
                 'actual_payment' => $request->actual_payment,
                 'estimated_payment' => $request->estimated_payment,
-                'difference' => $request->estimated_payment - $request->actual_payment,
-                'paid' => $request->paid,
-                'remaining_payment' => $request->remaining_payment,
-                'deadline' => $request->deadline,
-                'status_payment' => $request->status_payment,
-                'first_payment' => $request->first_payment,
-                'deadline_first_payment' => $request->deadline_first_payment,
-                'status_first_payment' => $request->status_first_payment,
-                'second_payment' => $request->second_payment,
-                'deadline_second_payment' => $request->deadline_second_payment,
-                'status_second_payment' => $request->status_second_payment,
+                'status' => $request->status,
             ]);
 
             // Return response sukses

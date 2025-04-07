@@ -20,12 +20,75 @@ class BudgetController extends Controller
     public function getBudgetsByProjectId($project_id)
     {
         try {
-            $Budgets = Budgets::where('project_id', $project_id)->get();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Budgets], 200);
+            $budgets = Budgets::where('project_id', $project_id)
+                ->with(['categoryBudget.listBudget.detailPaymentBudget'])
+                ->get()
+                ->map(function ($budget) {
+                    $totalCategory = $budget->categoryBudget->count();
+                    $totalList = $budget->categoryBudget->flatMap(function ($category) {
+                        return $category->listBudget;
+                    })->count();
+
+                    $totalListStatusTrue = $budget->categoryBudget->flatMap(function ($category) {
+                        return $category->listBudget->where('status', true);
+                    })->count();
+
+                    return [
+                        'id' => $budget->id,
+                        'project_id' => $budget->project_id,
+                        'estimated_payment' => $budget->estimated_payment,
+                        'actual_payment' => $budget->actual_payment,
+                        'paid' => $budget->paid,
+                        'unpaid' => $budget->unpaid,
+                        'difference' => $budget->difference,
+                        'balance' => $budget->balance,
+                        'total_category_budgets' => $totalCategory,
+                        'total_list_budgets' => $totalList,
+                        'total_status_true_list_budgets' => $totalListStatusTrue,
+                        'category_budgets' => $budget->categoryBudget->map(function ($category) {
+                            return [
+                                'id' => $category->id,
+                                'budget_id' => $category->budget_id,
+                                'title' => $category->title,
+                                'list_budgets' => $category->listBudget->map(function ($list) {
+                                    return [
+                                        'id' => $list->id,
+                                        'category_budget_id' => $list->category_budget_id,
+                                        'title' => $list->title,
+                                        'estimated_payment' => $list->estimated_payment,
+                                        'actual_payment' => $list->actual_payment,
+                                        'difference' => $list->difference,
+                                        'paid' => $list->paid,
+                                        'remaining_payment' => $list->remaining_payment,
+                                        'status' => (bool) $list->status,
+                                        'detail_payment_budgets' => $list->detailPaymentBudget->map(function ($detail) {
+                                            return [
+                                                'id' => $detail->id,
+                                                'list_budgets_id' => $detail->list_budgets_id,
+                                                'description' => $detail->description,
+                                                'deadline' => $detail->deadline,
+                                                'paid' => $detail->paid,
+                                                'payer' => $detail->payer,
+                                                'date_payment' => $detail->date_payment,
+                                                'type' => $detail->type,
+                                            ];
+                                        }),
+                                    ];
+                                }),
+                            ];
+                        }),
+                    ];
+                });
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $budgets
+            ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function getBudgetsById($id)
     {
         try {

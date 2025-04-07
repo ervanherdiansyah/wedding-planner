@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BrideGroom\FamilyMemberGroomController;
 use App\Http\Controllers\Api\BrideGroom\GroomController;
 use App\Http\Controllers\Api\Budget\BudgetController;
 use App\Http\Controllers\Api\Budget\CategoryBudgetController;
+use App\Http\Controllers\Api\Budget\DetailPaymentBudgetController;
 use App\Http\Controllers\Api\Budget\ListBudgetController;
 use App\Http\Controllers\Api\EventCommitteController;
 use App\Http\Controllers\Api\EventController;
@@ -200,10 +201,17 @@ Route::group([
         // List Budget
         Route::get('/list-budget', [ListBudgetController::class, 'getListBudgets']);
         Route::post('/list-budget/create', [ListBudgetController::class, 'createListBudgets']);
-        Route::get('/list-budget-by-category-budget-id/{categoy_budget_id}', [ListBudgetController::class, 'getListBudgetsByCategoyBudgetId']);
+        Route::get('/list-budget-by-category-budget-id/{categoy_budget_id}', [ListBudgetController::class, 'getListBudgetsByCategoryBudgetId']);
         Route::get('/list-budget/{id}', [ListBudgetController::class, 'getListBudgetsById']);
         Route::put('/list-budget/update/{id}', [ListBudgetController::class, 'updateListBudgets']);
         Route::delete('/list-budget/delete/{id}', [ListBudgetController::class, 'deleteListBudgets']);
+        // Detail List Budget
+        Route::get('/detail-list-budget', [DetailPaymentBudgetController::class, 'getDetailPaymentBudget']);
+        Route::post('/detail-list-budget/create', [DetailPaymentBudgetController::class, 'createDetailPaymentBudget']);
+        Route::get('/detail-list-budget-by-list-budget-id/{categoy_budget_id}', [DetailPaymentBudgetController::class, 'getDetailPaymentBudgetByListBudgetId']);
+        Route::get('/detail-list-budget/{id}', [DetailPaymentBudgetController::class, 'getDetailPaymentBudgetById']);
+        Route::put('/detail-list-budget/update/{id}', [DetailPaymentBudgetController::class, 'updateDetailPaymentBudget']);
+        Route::delete('/detail-list-budget/delete/{id}', [DetailPaymentBudgetController::class, 'deleteDetailPaymentBudget']);
         // Handover Budget
         Route::get('/handover-budget', [HandoverBudgetController::class, 'getHandoverBudget']);
         Route::post('/handover-budget/create', [HandoverBudgetController::class, 'createHandoverBudget']);

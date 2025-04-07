@@ -18,4 +18,8 @@ class ListBudgets extends Model
     {
         return $this->belongsTo(CategoryBudgets::class, 'category_budget_id');
     }
+    public function detailPaymentBudget()
+    {
+        return $this->hasMany(DetailPaymentBudget::class, 'list_budgets_id');
+    }
 }

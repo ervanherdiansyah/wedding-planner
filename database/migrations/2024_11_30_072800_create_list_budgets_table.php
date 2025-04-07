@@ -15,19 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_budget_id')->constrained('category_budgets')->onDelete('cascade');
             $table->integer('estimated_payment')->nullable();
+            $table->string('title')->nullable();
             $table->integer('actual_payment')->nullable();
             $table->integer('difference')->nullable();
             $table->integer('paid')->nullable();
             $table->integer('remaining_payment')->nullable();
-            $table->date('deadline')->nullable();
-            $table->integer('status_payment')->nullable();
-            $table->integer('first_payment')->nullable();
-            $table->date('deadline_first_payment')->nullable();
-            $table->integer('status_first_payment')->nullable();
-            $table->integer('second_payment')->nullable();
-            $table->date('deadline_second_payment')->nullable();
-            $table->integer('status_second_payment')->nullable();
-
+            $table->boolean('status')->nullable();
             $table->timestamps();
         });
     }
