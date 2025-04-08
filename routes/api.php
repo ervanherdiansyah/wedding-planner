@@ -49,7 +49,7 @@ Route::group([
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
 
-    Route::middleware(['jwt', 'check.role:user'])->group(function () {
+    Route::middleware(['jwt', 'check.role:user', 'check.payment'])->group(function () {
         // Overview
         Route::get('/overview/{project_id}', [OverviewController::class, 'getOverview']);
 

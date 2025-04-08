@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->integer('price')->nullable();
             $table->string('bank_type')->nullable();
-            $table->date('payment_date');
+            $table->date('payment_date')->nullable();
             $table->timestamps();
         });
     }
