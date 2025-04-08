@@ -8,6 +8,7 @@ use App\Models\Events;
 use App\Models\FamilyMemberBrides;
 use App\Models\FamilyMemberGrooms;
 use App\Models\Grooms;
+use App\Models\Payments;
 use App\Models\Projects;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -97,6 +98,14 @@ class AuthController extends Controller
             ]);
             $FamilyMemberGrooms = FamilyMemberGrooms::create([
                 'groom_id' => $groom->id
+            ]);
+
+            $payment = Payments::create([
+                'user_id' => $user->id,
+                'status' => $request->status,
+                'price' => $request->price,
+                'bank_type' => $request->bank_type,
+                'payment_date' => now(),
             ]);
             DB::commit();
             return response()->json([

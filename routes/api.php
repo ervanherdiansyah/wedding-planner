@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Handover\HandoverBudgetController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetItemController;
 use App\Http\Controllers\Api\ListPhotoController;
 use App\Http\Controllers\Api\OverviewController;
+use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\RundownController;
 use App\Http\Controllers\Api\SongListsController;
 use App\Http\Controllers\Api\Todolist\CategoryTodolistController;
@@ -229,6 +230,8 @@ Route::group([
         Route::delete('/handover-budget-item/delete/{id}', [HandoverBudgetItemController::class, 'deleteHandoverBudgetItem']);
     });
 });
+Route::get('/payment/{user_id}', [PaymentGatewayController::class, 'payment']);
+Route::post('/payment-callback', [PaymentGatewayController::class, 'callback']);
 
 Route::fallback(function () {
     return response()->json([
