@@ -223,7 +223,7 @@ Route::group([
         // Handover Budget Item
         Route::get('/handover-budget-item', [HandoverBudgetItemController::class, 'getHandoverBudgetItem']);
         Route::post('/handover-budget-item/create', [HandoverBudgetItemController::class, 'createHandoverBudgetItem']);
-        // Route::get('/handover-budget-item-by-project-id/{project_id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemByHandoverBudgetId']);
+        Route::get('/handover-budget-item-by-project-id/{project_id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemByHandoverBudgetId']);
         Route::get('/handover-budget-item-by-handover-budget-id/{handover_budget_id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemByHandoverBudgetId']);
         Route::get('/handover-budget-item/{id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemById']);
         Route::put('/handover-budget-item/update/{id}', [HandoverBudgetItemController::class, 'updateHandoverBudgetItem']);
