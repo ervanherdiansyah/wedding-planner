@@ -40,11 +40,11 @@ class FamilyMemberGroomController extends Controller
         try {
             //code...
             Request()->validate([
-                'bride_id' => 'required',
+                'groom_id' => 'required',
             ]);
 
             $FamilyMemberGrooms = FamilyMemberGrooms::create([
-                'bride_id' => $request->bride_id,
+                'groom_id' => $request->groom_id,
                 'relationship' => $request->relationship,
                 'name_family' => $request->name_family,
             ]);
