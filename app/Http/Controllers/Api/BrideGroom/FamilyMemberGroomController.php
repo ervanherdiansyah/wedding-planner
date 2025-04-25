@@ -45,8 +45,8 @@ class FamilyMemberGroomController extends Controller
 
             $FamilyMemberGrooms = FamilyMemberGrooms::create([
                 'groom_id' => $request->groom_id,
-                'relationship' => $request->relationship,
-                'name_family' => $request->name_family,
+                'relationship_groom' => $request->relationship_groom,
+                'name_family_groom' => $request->name_family_groom,
             ]);
 
             return response()->json(['message' => 'Create Data Successfully', 'data' => $FamilyMemberGrooms], 200);
@@ -69,8 +69,8 @@ class FamilyMemberGroomController extends Controller
             }
             // Update data bride
             $FamilyMemberGrooms->update([
-                'relationship' => $request->relationship,
-                'name_family' => $request->name_family,
+                'relationship_groom' => $request->relationship_groom,
+                'name_family_groom' => $request->name_family_groom,
             ]);
 
             // Return response sukses
