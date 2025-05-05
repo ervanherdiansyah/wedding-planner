@@ -23,9 +23,9 @@ class HandoverBudget extends Model
     {
         return $this->belongsTo(Projects::class, 'project_id');
     }
-    public function HandoverBudgetItem()
+    public function categoryHandover()
     {
-        return $this->hasMany(HandoverBudgetItem::class, 'handover_budgets_id');
+        return $this->hasMany(CategoryHandover::class, 'handover_budgets_id');
     }
     // Hitung sisa budget pria
     public function getRemainingMaleBudgetAttribute()

@@ -17,8 +17,8 @@ class HandoverBudgetItem extends Model
         'status' => 'integer',
         'price' => 'integer',
     ];
-    public function HandoverBudget()
+    public function categoryHandoverBudget()
     {
-        return $this->belongsTo(HandoverBudget::class, 'handover_budgets_id');
+        return $this->belongsTo(CategoryHandover::class, 'category_handover_budgets_id');
     }
 }

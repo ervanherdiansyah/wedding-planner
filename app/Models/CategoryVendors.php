@@ -13,6 +13,7 @@ class CategoryVendors extends Model
     ];
     protected $casts = [
         'project_id' => 'integer',
+        'status' => 'boolean',
     ];
     public function project()
     {

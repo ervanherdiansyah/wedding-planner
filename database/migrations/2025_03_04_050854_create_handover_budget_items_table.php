@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('handover_budget_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('handover_budgets_id')->constrained('handover_budgets')->onDelete('cascade'); // Relasi ke budgets
+            $table->foreignId('category_handover_budgets_id')->constrained('category_handovers')->onDelete('cascade'); // Relasi ke budgets
             $table->string('name')->nullable(); // Nama item
             $table->enum('category', ['male', 'female'])->nullable(); // Kategori item (pria/wanita)
             $table->enum('purchase_method', ['online', 'offline'])->nullable(); // Sistem pembelian

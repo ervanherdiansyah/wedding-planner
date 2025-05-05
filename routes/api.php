@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Budget\DetailPaymentBudgetController;
 use App\Http\Controllers\Api\Budget\ListBudgetController;
 use App\Http\Controllers\Api\EventCommitteController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\Handover\CategoryHandoverBudgetController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetItemController;
 use App\Http\Controllers\Api\ListPhotoController;
@@ -129,6 +130,7 @@ Route::group([
         Route::delete('/sub-todolist/delete/{id}', [SubTodolistController::class, 'deleteSubTodolists']);
         // Category Vendor
         Route::get('/category-vendor', [CategoryVendorController::class, 'getCategoryVendors']);
+        Route::get('/select-vendor-project-id/{project_id}', [CategoryVendorController::class, 'getVendorsByProjectId']);
         Route::post('/category-vendor/create', [CategoryVendorController::class, 'createCategoryVendors']);
         Route::get('/category-vendor-project-id/{project_id}', [CategoryVendorController::class, 'getCategoryVendorsByProjectId']);
         Route::get('/category-vendor/{id}', [CategoryVendorController::class, 'getCategoryVendorsById']);
@@ -220,14 +222,23 @@ Route::group([
         Route::get('/handover-budget/{id}', [HandoverBudgetController::class, 'getHandoverBudgetById']);
         Route::put('/handover-budget/update/{id}', [HandoverBudgetController::class, 'updateHandoverBudget']);
         Route::delete('/handover-budget/delete/{id}', [HandoverBudgetController::class, 'deleteHandoverBudget']);
+        // Handover Budget
+        Route::get('/category-handover-budget', [CategoryHandoverBudgetController::class, 'getCategoryHandover']);
+        Route::post('/category-handover-budget/create', [CategoryHandoverBudgetController::class, 'createCategoryHandover']);
+        Route::get('/category-handover-budget-by-handover-budget-id/{handover_budget_id}', [CategoryHandoverBudgetController::class, 'getCategoryHandoverByHandoverBudgetId']);
+        Route::get('/category-handover-budget/{id}', [CategoryHandoverBudgetController::class, 'getCategoryHandoverById']);
+        Route::put('/category-handover-budget/update/{id}', [CategoryHandoverBudgetController::class, 'updateCategoryHandover']);
+        Route::delete('/category-handover-budget/delete/{id}', [CategoryHandoverBudgetController::class, 'deleteCategoryHandover']);
         // Handover Budget Item
         Route::get('/handover-budget-item', [HandoverBudgetItemController::class, 'getHandoverBudgetItem']);
         Route::post('/handover-budget-item/create', [HandoverBudgetItemController::class, 'createHandoverBudgetItem']);
-        // Route::get('/handover-budget-item-by-project-id/{project_id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemByHandoverBudgetId']);
-        Route::get('/handover-budget-item-by-handover-budget-id/{handover_budget_id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemByHandoverBudgetId']);
+        Route::get('/handover-budget-item-by-category-handover-id/{project_id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemByCategoryHandoverBudgetsId']);
         Route::get('/handover-budget-item/{id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemById']);
         Route::put('/handover-budget-item/update/{id}', [HandoverBudgetItemController::class, 'updateHandoverBudgetItem']);
         Route::delete('/handover-budget-item/delete/{id}', [HandoverBudgetItemController::class, 'deleteHandoverBudgetItem']);
+
+        // All Handover Budget
+        Route::get('/all-handover-budget-by-project-id/{project_id}', [HandoverBudgetItemController::class, 'getAllHandoverBudgetByProjectId']);
     });
 });
 Route::get('/payment/{user_id}', [PaymentGatewayController::class, 'payment']);

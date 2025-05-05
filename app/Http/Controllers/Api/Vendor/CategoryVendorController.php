@@ -26,6 +26,25 @@ class CategoryVendorController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+    public function getVendorsByProjectId($project_id)
+    {
+        try {
+            $categoryVendors = CategoryVendors::with(['listVendor' => function ($query) {
+                $query->where('status', 1); // hanya ambil vendor yang aktif
+            }])
+                ->where('project_id', $project_id)
+                ->get();
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $categoryVendors
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function getCategoryVendorsById($id)
     {
         try {

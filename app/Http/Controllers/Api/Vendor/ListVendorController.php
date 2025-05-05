@@ -48,6 +48,7 @@ class ListVendorController extends Controller
                 $namaGambar = str_replace(' ', '_', $file_name);
                 $image = $request->image->storeAs('public/image_vendor', $namaGambar);
             }
+
             $ListVendors = ListVendors::create([
                 'category_vendor_id' => $request->category_vendor_id,
                 'vendor_name' => $request->vendor_name,
@@ -57,6 +58,7 @@ class ListVendorController extends Controller
                 'social_media' => $request->social_media,
                 'vendor_features' => $request->vendor_features,
                 'image' =>  $file_name ? "image_vendor/" . $namaGambar : null,
+                'status' => 0,
             ]);
 
             return response()->json(['message' => 'Create Data Successfully', 'data' => $ListVendors], 200);
@@ -78,6 +80,20 @@ class ListVendorController extends Controller
                 return response()->json(['message' => 'ListVendors not found'], 404);
             }
 
+            if ($request->status == 1) {
+                // Cek apakah ada vendor lain di kategori yang sama dengan status 1
+                $checkstatus = ListVendors::where('category_vendor_id', $request->category_vendor_id)
+                    ->where('status', 1);
+
+                $checkstatus = $checkstatus->first();
+
+                if ($checkstatus) {
+                    // Update vendor lama menjadi tidak aktif
+                    $checkstatus->update(['status' => 0]);
+                }
+            }
+
+
             // Periksa jika ada file yang diunggah
             if ($request->hasFile('photo_ListVendors')) {
                 // Hapus file lama jika ada
@@ -98,6 +114,7 @@ class ListVendorController extends Controller
                     'vendor_contact' => $request->vendor_contact,
                     'social_media' => $request->social_media,
                     'vendor_features' => $request->vendor_features,
+                    'status' => $request->status,
                     'image' => 'image_vendor/' . $sanitizedFileName,
                 ]);
             } else {
@@ -108,6 +125,7 @@ class ListVendorController extends Controller
                     'vendor_contact' => $request->vendor_contact,
                     'social_media' => $request->social_media,
                     'vendor_features' => $request->vendor_features,
+                    'status' => $request->status,
                 ]);
             }
 
