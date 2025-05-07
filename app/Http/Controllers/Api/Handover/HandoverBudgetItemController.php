@@ -137,12 +137,18 @@ class HandoverBudgetItemController extends Controller
         try {
             // Ambil data HandoverBudget beserta relasinya
             $HandoverBudget = HandoverBudget::where('project_id', $project_id)->first();
-            $male_budget = $HandoverBudget->male_budget;
-            $female_budget = $HandoverBudget->female_budget;
-            $actual_male_budget = $HandoverBudget->used_budget_male;
-            $actual_female_budget = $HandoverBudget->used_budget_female;
-            $diferent_male = $HandoverBudget->male_budget - $HandoverBudget->used_budget_male;
-            $diferent_female = $HandoverBudget->female_budget - $HandoverBudget->used_budget_female;
+            $male_budget = $HandoverBudget ? $HandoverBudget->male_budget : null;
+            $female_budget = $HandoverBudget ? $HandoverBudget->female_budget : null;
+            $actual_male_budget = $HandoverBudget ? $HandoverBudget->used_budget_male : null;
+            $actual_female_budget = $HandoverBudget ? $HandoverBudget->used_budget_female : null;
+
+            $diferent_male = ($male_budget !== null && $actual_male_budget !== null)
+                ? $male_budget - $actual_male_budget
+                : null;
+
+            $diferent_female = ($female_budget !== null && $actual_female_budget !== null)
+                ? $female_budget - $actual_female_budget
+                : null;
 
             $handoverBudgets = HandoverBudget::where('project_id', $project_id)
                 ->with(['categoryHandover.HandoverBudgetItem'])
@@ -219,7 +225,7 @@ class HandoverBudgetItemController extends Controller
             return response()->json([
                 'message' => 'Fetch Data Successfully',
                 'data' => [
-                    'id' => $HandoverBudget->id,
+                    'id' => $HandoverBudget ? $HandoverBudget->id : null,
                     'HandoverBudgetItemMale' => [
                         'male_budget' => $male_budget,
                         'actual_male_budget' => $actual_male_budget,

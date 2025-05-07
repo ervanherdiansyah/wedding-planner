@@ -17,11 +17,11 @@ class OverviewController extends Controller
     {
         try {
             // Information Bride and Groom
-            $bride = Brides::where('project_id', $project_id)->get();
+            $bride = Brides::where('project_id', $project_id)->first();
             $groom = Grooms::where('project_id', $project_id)->first();
 
             // Event
-            $events = Events::where('project_id', $project_id)->get();
+            $events = Events::where('project_id', $project_id)->first();
 
             // Hitung status completed
             $completedSubTodolists = SubTodolists::whereIn('todolist_id', Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project_id)->pluck('id'))->pluck('id'))->where('status', 1)->count();
