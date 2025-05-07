@@ -136,6 +136,14 @@ class HandoverBudgetItemController extends Controller
     {
         try {
             // Ambil data HandoverBudget beserta relasinya
+            $HandoverBudget = HandoverBudget::where('project_id', $project_id)->first();
+            $male_budget = $HandoverBudget->male_budget;
+            $female_budget = $HandoverBudget->female_budget;
+            $actual_male_budget = $HandoverBudget->used_budget_male;
+            $actual_female_budget = $HandoverBudget->used_budget_female;
+            $diferent_male = $HandoverBudget->male_budget - $HandoverBudget->used_budget_male;
+            $diferent_female = $HandoverBudget->female_budget - $HandoverBudget->used_budget_female;
+
             $handoverBudgets = HandoverBudget::where('project_id', $project_id)
                 ->with(['categoryHandover.HandoverBudgetItem'])
                 ->get();
@@ -147,6 +155,8 @@ class HandoverBudgetItemController extends Controller
             $buyMale = 0;
             $totalFemale = 0;
             $buyFemale = 0;
+            $totalCategoryMale = 0;
+            $totalCategoryFemale = 0;
 
             foreach ($handoverBudgets as $handover) {
                 foreach ($handover->categoryHandover as $category) {
@@ -155,13 +165,15 @@ class HandoverBudgetItemController extends Controller
                     // Filter male
                     $maleItems = $items->where('category', 'male')->values();
                     if ($maleItems->isNotEmpty()) {
+                        $totalCategoryMale++;
                         $resultMale[] = [
                             'id' => $category->id,
+                            'handover_budgets_id' => $category->handover_budgets_id,
                             'title' => $category->title,
                             'items' => $maleItems->map(function ($item) use ($category) {
                                 return [
                                     'id' => $item->id,
-                                    'handover_budgets_id' => $category->handover_budgets_id,
+                                    'category_handover_budgets_id' => $category->id,
                                     'name' => $item->name,
                                     'category' => $item->category,
                                     'purchase_method' => $item->purchase_method,
@@ -179,13 +191,15 @@ class HandoverBudgetItemController extends Controller
                     // Filter female
                     $femaleItems = $items->where('category', 'female')->values();
                     if ($femaleItems->isNotEmpty()) {
+                        $totalCategoryFemale++;
                         $resultFemale[] = [
                             'id' => $category->id,
+                            'handover_budgets_id' => $category->handover_budgets_id,
                             'title' => $category->title,
                             'items' => $femaleItems->map(function ($item) use ($category) {
                                 return [
                                     'id' => $item->id,
-                                    'handover_budgets_id' => $category->handover_budgets_id,
+                                    'category_handover_budgets_id' => $category->id,
                                     'name' => $item->name,
                                     'category' => $item->category,
                                     'purchase_method' => $item->purchase_method,
@@ -204,101 +218,32 @@ class HandoverBudgetItemController extends Controller
 
             return response()->json([
                 'message' => 'Fetch Data Successfully',
-                'HandoverBudgetItemMale' => $resultMale,
-                'HandoverBudgetItemFemale' => $resultFemale,
-                'total_category' => $handoverBudgets->count(),
-                'total_item_male' => $totalMale,
-                'total_buy_item_male' => $buyMale,
-                'total_item_female' => $totalFemale,
-                'total_buy_item_female' => $buyFemale,
+                'data' => [
+                    'id' => $HandoverBudget->id,
+                    'HandoverBudgetItemMale' => [
+                        'male_budget' => $male_budget,
+                        'actual_male_budget' => $actual_male_budget,
+                        'diferent_male' => $diferent_male,
+                        'totalCategoryMale' => $totalCategoryMale,
+                        'total_item_male' => $totalMale,
+                        'total_buy_item_male' => $buyMale,
+                        'listHandover' => $resultMale,
+                    ],
+                    'HandoverBudgetItemFemale' => [
+                        'female_budget' => $female_budget,
+                        'actual_female_budget' => $actual_female_budget,
+                        'diferent_female' => $diferent_female,
+                        'totalCategoryFemale' => $totalCategoryFemale,
+                        'total_item_female' => $totalFemale,
+                        'total_buy_item_female' => $buyFemale,
+                        'listHandover' => $resultFemale,
+                    ],
+                ],
+
+                // 'total_category' => $handoverBudgets->count(),
             ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-
-    // public function getHandoverBudgetItemByProjectId($project_id)
-    // {
-    //     try {
-    //         // $user = Auth::user();
-    //         // $project = Projects::where('user_id', $user->id)->first();
-    //         $HandoverBudget = HandoverBudget::where('project_id', $project_id)
-    //             ->with(['categoryHandover.HandoverBudgetItem']) // Nested eager loading
-    //             ->get()
-    //             ->map(function ($HandoverBudget) {
-    //                 // Filter berdasarkan kategori
-
-    //                 // Return data yang diperlukan
-    //                 return [
-    //                     // Total dan yang sudah dibeli berdasarkan kategori
-    //                     "total_HandoverBudgetItem_male" => $MaleItems->count(),
-    //                     "buy_HandoverBudgetItem_male" => $MaleItems->where('status', true)->count(),
-    //                     "total_HandoverBudgetItem_female" => $FemaleItems->count(),
-    //                     "buy_HandoverBudgetItem_female" => $FemaleItems->where('status', true)->count(),
-
-    //                     // Data berdasarkan kategori
-    //                     $resultMale = [];
-    //     $resultFemale = [];
-
-    //     foreach ($handoverBudgets as $handover) {
-    //         foreach ($handover->categoryHandover as $category) {
-    //             $items = $category->HandoverBudgetItem;
-
-    //             // Filter kategori male
-    //             $maleItems = $items->where('category', 'male')->values();
-    //             if ($maleItems->isNotEmpty()) {
-    //                 $resultMale[] = [
-    //                     'id' => $category->id,
-    //                     'title' => $category->title,
-    //                     'items' => $maleItems->map(function ($item) {
-    //                         return [
-    //                             'id' => $item->id,
-    //                             'handover_budgets_id' => $item->handover_budgets_id,
-    //                             'name' => $item->name,
-    //                             'category' => $item->category,
-    //                             'purchase_method' => $item->purchase_method,
-    //                             'price' => $item->price,
-    //                             'detail' => $item->detail,
-    //                             'purchase_date' => $item->purchase_date,
-    //                             'status' => $item->status,
-    //                         ];
-    //                     }),
-    //                 ];
-    //             }
-
-    //             // Filter kategori female
-    //             $femaleItems = $items->where('category', 'female')->values();
-    //             if ($femaleItems->isNotEmpty()) {
-    //                 $resultFemale[] = [
-    //                     'id' => $category->id,
-    //                     'title' => $category->title,
-    //                     'items' => $femaleItems->map(function ($item) {
-    //                         return [
-    //                             'id' => $item->id,
-    //                             'handover_budgets_id' => $item->handover_budgets_id,
-    //                             'name' => $item->name,
-    //                             'category' => $item->category,
-    //                             'purchase_method' => $item->purchase_method,
-    //                             'price' => $item->price,
-    //                             'detail' => $item->detail,
-    //                             'purchase_date' => $item->purchase_date,
-    //                             'status' => $item->status,
-    //                         ];
-    //                     }),
-    //                 ];
-    //             }
-    //                 ];
-    //             });
-
-    //         $total_category = $HandoverBudget->count();
-    //         $total_item_male = HandoverBudgetItem::where('category', "male")->count();
-    //         $total_item_female = HandoverBudgetItem::where('category', "female")->count();
-    //         $total_buy_item_male = HandoverBudgetItem::where('category', "male")->where('status', true)->count();
-    //         $total_buy_item_female = HandoverBudgetItem::where('category', "female")->where('status', true)->count();
-
-    //         return response()->json(['message' => 'Fetch Data Successfully', 'data' => $HandoverBudget, 'total_category' => $total_category, 'total_item_male' => $total_item_male, 'total_item_female' => $total_item_female, 'total_buy_item_male' => $total_buy_item_male, 'total_buy_item_female' => $total_buy_item_female], 200);
-    //     } catch (\Exception $th) {
-    //         return response()->json(['message' => $th->getMessage()], 500);
-    //     }
-    // }
 }

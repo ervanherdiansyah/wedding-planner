@@ -21,6 +21,6 @@ class ProjectMemberships extends Model
 
     public function invitedUser()
     {
-        return $this->belongsTo(User::class, 'invited_user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

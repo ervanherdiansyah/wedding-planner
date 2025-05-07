@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Handover\CategoryHandoverBudgetController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetItemController;
 use App\Http\Controllers\Api\ListPhotoController;
+use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\OverviewController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\RundownController;
@@ -49,8 +50,11 @@ Route::group([
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
+    Route::post('/register-invited-user', [AuthController::class, 'registerViaInvite']);
 
     Route::middleware(['jwt', 'check.role:user', 'check.payment'])->group(function () {
+        // Invite User
+        Route::post('/invited-user', [MembershipController::class, 'inviteUser']);
         // Overview
         Route::get('/overview/{project_id}', [OverviewController::class, 'getOverview']);
 

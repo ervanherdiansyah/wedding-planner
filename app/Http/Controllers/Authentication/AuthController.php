@@ -9,6 +9,7 @@ use App\Models\FamilyMemberBrides;
 use App\Models\FamilyMemberGrooms;
 use App\Models\Grooms;
 use App\Models\Payments;
+use App\Models\ProjectMemberships;
 use App\Models\Projects;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,7 +25,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'registerViaInvite']]);
     }
 
     /**
@@ -213,5 +214,43 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
+    }
+
+    public function registerViaInvite(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6'
+        ]);
+
+        $invite = ProjectMemberships::where('token', $request->token)
+            ->where('status', 'invited')->firstOrFail();
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'role' => "user",
+            'phone_number' => $request->phone_number,
+
+        ]);
+
+        // Update membership
+        $invite->update([
+            'user_id' => $user->id,
+            'status' => 'registered',
+            'token' => null
+        ]);
+
+        // Auto generate payment
+        Payments::create([
+            'user_id' => $user->id,
+            'status' => 'paid',
+            'tanggal_pembayaran' => now()
+        ]);
+
+        return response()->json(['message' => 'Registration complete']);
     }
 }

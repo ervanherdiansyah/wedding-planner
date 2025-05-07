@@ -71,7 +71,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function invitations()
     {
-        return $this->hasMany(ProjectMemberships::class, 'invited_user_id');
+        return $this->hasMany(ProjectMemberships::class, 'user_id');
     }
     public function payment()
     {
