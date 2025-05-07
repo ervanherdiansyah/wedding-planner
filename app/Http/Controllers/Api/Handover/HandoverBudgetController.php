@@ -47,7 +47,9 @@ class HandoverBudgetController extends Controller
                     'diferent_male' => $diferent_male,
                     'diferent_female' => $diferent_female,
                     'bride' => $bride ? $bride->name_bride : null,
+                    'photo_bride' => $bride ? $bride->photo_bride : null,
                     'groom' => $groom ? $groom->name_groom : null,
+                    'photo_groom' => $groom ? $groom->photo_groom : null,
                 ]
             ], 200);
         } catch (\Exception $th) {
