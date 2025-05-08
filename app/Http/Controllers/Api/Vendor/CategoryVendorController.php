@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Vendor;
 
 use App\Http\Controllers\Controller;
 use App\Models\CategoryVendors;
+use App\Models\ListVendors;
 use Illuminate\Http\Request;
 
 class CategoryVendorController extends Controller
@@ -35,9 +36,25 @@ class CategoryVendorController extends Controller
                 ->where('project_id', $project_id)
                 ->get();
 
+            // Total semua category vendor
+            $totalCategoryVendor = $categoryVendors->count();
+
+            // Ambil semua list vendor (tanpa filter status) untuk hitung total list vendor
+            $allListVendors = ListVendors::whereIn('category_vendor_id', $categoryVendors->pluck('id'))->get();
+            $totalListVendor = $allListVendors->count();
+
+            // Hitung vendor deal (yang aktif / status = 1)
+            $totalVendorDeal = $allListVendors->where('status', 1)->count();
+
             return response()->json([
                 'message' => 'Fetch Data Successfully',
-                'data' => $categoryVendors
+                'summary' => [
+                    'total_category_vendor' => $totalCategoryVendor,
+                    'total_list_vendor' => $totalListVendor,
+                    'total_vendor_deal' => $totalVendorDeal,
+                ],
+                'data' => $categoryVendors,
+
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
