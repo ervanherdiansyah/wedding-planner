@@ -22,15 +22,13 @@ class ListPhotoController extends Controller
     public function getListPhotoByProjectId($project_id)
     {
         try {
-            $bride = Brides::where('project_id', $project_id)->first();
-            $groom = Grooms::where('project_id', $project_id)->first();
+
 
             $ListPhoto = ListPhoto::where('project_id', $project_id)->get();
             return response()->json([
                 'message' => 'Fetch Data Successfully',
                 'data' => $ListPhoto,
-                'photo_bride' => $bride ? $bride->photo_bride : null,
-                'photo_groom' => $groom ? $groom->photo_groom : null,
+
             ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
@@ -39,9 +37,16 @@ class ListPhotoController extends Controller
     public function getListPhotoByType($project_id)
     {
         try {
+            $bride = Brides::where('project_id', $project_id)->first();
+            $groom = Grooms::where('project_id', $project_id)->first();
             $ListPhotoBride = ListPhoto::where('project_id', $project_id)->where('type', 'bride')->get();
             $ListPhotoGroom = ListPhoto::where('project_id', $project_id)->where('type', 'groom')->get();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => ['bride' => $ListPhotoBride, 'groom' => $ListPhotoGroom]], 200);
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => [
+                'bride' => $ListPhotoBride,
+                'groom' => $ListPhotoGroom,
+                'photo_bride' => $bride ? $bride->photo_bride : null,
+                'photo_groom' => $groom ? $groom->photo_groom : null,
+            ]], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }

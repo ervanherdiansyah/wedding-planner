@@ -22,14 +22,10 @@ class VipGuestListsController extends Controller
     public function getVipGuestListsByProjectId($project_id)
     {
         try {
-            $bride = Brides::where('project_id', $project_id)->first();
-            $groom = Grooms::where('project_id', $project_id)->first();
             $VipGuestLists = VipGuestLists::where('project_id', $project_id)->get();
             return response()->json([
                 'message' => 'Fetch Data Successfully',
                 'data' => $VipGuestLists,
-                'photo_bride' => $bride ? $bride->photo_bride : null,
-                'photo_groom' => $groom ? $groom->photo_groom : null,
             ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
@@ -38,9 +34,16 @@ class VipGuestListsController extends Controller
     public function getVipGuestListsByType($project_id)
     {
         try {
+            $bride = Brides::where('project_id', $project_id)->first();
+            $groom = Grooms::where('project_id', $project_id)->first();
             $VipGuestListsBride = VipGuestLists::where('project_id', $project_id)->where('type', 'bride')->get();
             $VipGuestListsGroom = VipGuestLists::where('project_id', $project_id)->where('type', 'groom')->get();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => ['bride' => $VipGuestListsBride, 'groom' => $VipGuestListsGroom]], 200);
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => [
+                'bride' => $VipGuestListsBride,
+                'groom' => $VipGuestListsGroom,
+                'photo_bride' => $bride ? $bride->photo_bride : null,
+                'photo_groom' => $groom ? $groom->photo_groom : null,
+            ]], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
