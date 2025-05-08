@@ -170,55 +170,55 @@ class HandoverBudgetItemController extends Controller
 
                     // Filter male
                     $maleItems = $items->where('category', 'male')->values();
-                    if ($maleItems->isNotEmpty()) {
-                        $totalCategoryMale++;
-                        $resultMale[] = [
-                            'id' => $category->id,
-                            'handover_budgets_id' => $category->handover_budgets_id,
-                            'title' => $category->title,
-                            'items' => $maleItems->map(function ($item) use ($category) {
-                                return [
-                                    'id' => $item->id,
-                                    'category_handover_budgets_id' => $category->id,
-                                    'name' => $item->name,
-                                    'category' => $item->category,
-                                    'purchase_method' => $item->purchase_method,
-                                    'price' => $item->price,
-                                    'detail' => $item->detail,
-                                    'purchase_date' => $item->purchase_date,
-                                    'status' => $item->status,
-                                ];
-                            }),
-                        ];
-                        $totalMale += $maleItems->count();
-                        $buyMale += $maleItems->where('status', true)->count();
-                    }
+                    $totalCategoryMale++;
+                    $resultMale[] = [
+                        'id' => $category->id,
+                        'handover_budgets_id' => $category->handover_budgets_id,
+                        'title' => $category->title,
+                        'items' => $maleItems->map(function ($item) use ($category) {
+                            return [
+                                'id' => $item->id,
+                                'category_handover_budgets_id' => $category->id,
+                                'name' => $item->name,
+                                'category' => $item->category,
+                                'purchase_method' => $item->purchase_method,
+                                'price' => $item->price,
+                                'detail' => $item->detail,
+                                'purchase_date' => $item->purchase_date,
+                                'status' => $item->status,
+                            ];
+                        }),
+                    ];
+                    $totalMale += $maleItems->count();
+                    $buyMale += $maleItems->where('status', true)->count();
+                    // if ($maleItems->isNotEmpty()) {
+                    // }
 
                     // Filter female
                     $femaleItems = $items->where('category', 'female')->values();
-                    if ($femaleItems->isNotEmpty()) {
-                        $totalCategoryFemale++;
-                        $resultFemale[] = [
-                            'id' => $category->id,
-                            'handover_budgets_id' => $category->handover_budgets_id,
-                            'title' => $category->title,
-                            'items' => $femaleItems->map(function ($item) use ($category) {
-                                return [
-                                    'id' => $item->id,
-                                    'category_handover_budgets_id' => $category->id,
-                                    'name' => $item->name,
-                                    'category' => $item->category,
-                                    'purchase_method' => $item->purchase_method,
-                                    'price' => $item->price,
-                                    'detail' => $item->detail,
-                                    'purchase_date' => $item->purchase_date,
-                                    'status' => $item->status,
-                                ];
-                            }),
-                        ];
-                        $totalFemale += $femaleItems->count();
-                        $buyFemale += $femaleItems->where('status', true)->count();
-                    }
+                    $totalCategoryFemale++;
+                    $resultFemale[] = [
+                        'id' => $category->id,
+                        'handover_budgets_id' => $category->handover_budgets_id,
+                        'title' => $category->title,
+                        'items' => $femaleItems->map(function ($item) use ($category) {
+                            return [
+                                'id' => $item->id,
+                                'category_handover_budgets_id' => $category->id,
+                                'name' => $item->name,
+                                'category' => $item->category,
+                                'purchase_method' => $item->purchase_method,
+                                'price' => $item->price,
+                                'detail' => $item->detail,
+                                'purchase_date' => $item->purchase_date,
+                                'status' => $item->status,
+                            ];
+                        }),
+                    ];
+                    $totalFemale += $femaleItems->count();
+                    $buyFemale += $femaleItems->where('status', true)->count();
+                    // if ($femaleItems->isNotEmpty()) {
+                    // }
                 }
             }
 

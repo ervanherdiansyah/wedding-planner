@@ -95,10 +95,10 @@ class ListVendorController extends Controller
 
 
             // Periksa jika ada file yang diunggah
-            if ($request->hasFile('photo_ListVendors')) {
+            if ($request->hasFile('image')) {
                 // Hapus file lama jika ada
-                if ($ListVendors->photo_ListVendors && Storage::exists('public/' . $ListVendors->photo_ListVendors)) {
-                    Storage::delete('public/' . $ListVendors->photo_ListVendors);
+                if ($ListVendors->image && Storage::exists('public/' . $ListVendors->image)) {
+                    Storage::delete('public/' . $ListVendors->image);
                 }
 
                 // Simpan file baru
