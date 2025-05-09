@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('social_media')->nullable();
             $table->string('vendor_features')->nullable();
             $table->string('image')->nullable();
+            $table->boolean('status')->nullable();
             $table->timestamps();
         });
     }
