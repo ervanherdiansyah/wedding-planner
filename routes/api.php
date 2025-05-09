@@ -15,7 +15,9 @@ use App\Http\Controllers\Api\Handover\HandoverBudgetController;
 use App\Http\Controllers\Api\Handover\HandoverBudgetItemController;
 use App\Http\Controllers\Api\ListPhotoController;
 use App\Http\Controllers\Api\MembershipController;
+use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\OverviewController;
+use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\RundownController;
 use App\Http\Controllers\Api\SongListsController;
@@ -53,6 +55,20 @@ Route::group([
     Route::post('/register-invited-user', [AuthController::class, 'registerViaInvite']);
 
     Route::middleware(['jwt', 'check.role:user', 'check.payment'])->group(function () {
+        // Menu
+        Route::get('/menu', [MenuController::class, 'getMenu']);
+        Route::post('/menu/create', [MenuController::class, 'createMenu']);
+        Route::get('/menu-project-id/{project_id}', [MenuController::class, 'getMenuByProjectId']);
+        Route::get('/menu/{id}', [MenuController::class, 'getMenuById']);
+        Route::put('/menu/update/{id}', [MenuController::class, 'updateMenu']);
+        Route::delete('/menu/delete/{id}', [MenuController::class, 'deleteMenu']);
+        // Package
+        Route::get('/package', [PackageController::class, 'getPackage']);
+        Route::post('/package/create', [PackageController::class, 'createPackage']);
+        Route::get('/package-project-id/{project_id}', [PackageController::class, 'getPackageByProjectId']);
+        Route::get('/package/{id}', [PackageController::class, 'getPackageById']);
+        Route::put('/package/update/{id}', [PackageController::class, 'updatePackage']);
+        Route::delete('/package/delete/{id}', [PackageController::class, 'deletePackage']);
         // Invite User
         Route::post('/invited-user', [MembershipController::class, 'inviteUser']);
         // Overview
