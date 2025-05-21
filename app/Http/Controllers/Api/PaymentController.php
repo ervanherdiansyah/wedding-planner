@@ -34,7 +34,16 @@ class PaymentController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function storePayments(Request $request)
+    public function getPaymentsById($id)
+    {
+        try {
+            $Payments = Payments::where('id', $id)->first();
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Payments], 200);
+        } catch (\Exception $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+    public function createPayments(Request $request)
     {
         try {
             //code...
@@ -107,6 +116,36 @@ class PaymentController extends Controller
             return response()->json(['message' => 'Payments Deleted Successfully!'], 200);
         } catch (\Throwable $th) {
             //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function updateStatusPayments(Request $request, $id)
+    {
+        try {
+            // Validasi input
+            $request->validate([
+                'status' => 'required',
+            ]);
+
+            // Cari data bride berdasarkan ID
+            $Payments = Payments::find($id);
+            if (!$Payments) {
+                return response()->json(['message' => 'Payments not found'], 404);
+            }
+
+            $Payments->update([
+                'status' => $request->status,
+            ]);
+
+
+            // Return response sukses
+            return response()->json(['message' => 'Payments Updated successfully!', 'data' => $Payments], 200);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Tangkap error validasi dan kembalikan dalam format JSON
+            return response()->json(['errors' => $e->errors()], 422);
+        } catch (\Throwable $th) {
+            // Tangkap error lainnya
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }

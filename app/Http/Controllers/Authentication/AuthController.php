@@ -20,6 +20,7 @@ use App\Models\HandoverBudgetItem;
 use App\Models\ListBudgets;
 use App\Models\ListPhoto;
 use App\Models\ListVendors;
+use App\Models\Package;
 use App\Models\Payments;
 use App\Models\ProjectMemberships;
 use App\Models\Projects;
@@ -124,11 +125,11 @@ class AuthController extends Controller
                 'name_family' => "Nana",
             ]);
 
-
+            $package = Package::find($request->package);
             $payment = Payments::create([
                 'user_id' => $user->id,
-                'status' => $request->status,
-                'price' => $request->price,
+                'status' => "Unpaid",
+                'price' => $package->price,
                 'bank_type' => $request->bank_type,
                 'payment_date' => now(),
             ]);

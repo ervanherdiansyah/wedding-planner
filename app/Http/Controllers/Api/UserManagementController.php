@@ -36,7 +36,16 @@ class UserManagementController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function storeUser(Request $request)
+    public function getUserById($id)
+    {
+        try {
+            $User = User::where('id', $id)->first();
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $User], 200);
+        } catch (\Exception $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+    public function createUser(Request $request)
     {
         try {
             //code...

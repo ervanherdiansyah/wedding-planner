@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\MembershipController;
 use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\OverviewController;
 use App\Http\Controllers\Api\PackageController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\PaymentGatewayController;
 use App\Http\Controllers\Api\RundownController;
 use App\Http\Controllers\Api\SongListsController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\Api\Todolist\SubTodolistController;
 use App\Http\Controllers\Api\Todolist\TodolistController;
 use App\Http\Controllers\Api\Uniform\UniformCategoryController;
 use App\Http\Controllers\Api\Uniform\UniformController;
+use App\Http\Controllers\Api\UserManagementController;
 use App\Http\Controllers\Api\Vendor\CategoryVendorController;
 use App\Http\Controllers\Api\Vendor\ListVendorController;
 use App\Http\Controllers\Api\VipGuestListsController;
@@ -63,6 +65,19 @@ Route::group([
         Route::get('/menu/{id}', [MenuController::class, 'getMenuById']);
         Route::put('/menu/update/{id}', [MenuController::class, 'updateMenu']);
         Route::delete('/menu/delete/{id}', [MenuController::class, 'deleteMenu']);
+        // Payments
+        Route::get('/payments', [PaymentController::class, 'getPayments']);
+        Route::post('/payments/create', [PaymentController::class, 'createPayments']);
+        Route::get('/payments/{id}', [PaymentController::class, 'getPaymentsById']);
+        Route::put('/payments/update/{id}', [PaymentController::class, 'updatePayments']);
+        Route::put('/payments-status/update/{id}', [PaymentController::class, 'updateStatusPayments']);
+        Route::delete('/payments/delete/{id}', [PaymentController::class, 'deletePayments']);
+        // User Management
+        Route::get('/user-management', [UserManagementController::class, 'getUser']);
+        Route::post('/user-management/create', [UserManagementController::class, 'createUser']);
+        Route::get('/user-management/{id}', [UserManagementController::class, 'getUserById']);
+        Route::put('/user-management/update/{id}', [UserManagementController::class, 'updateUser']);
+        Route::delete('/user-management/delete/{id}', [UserManagementController::class, 'deleteUser']);
         // Package
         Route::get('/package', [PackageController::class, 'getPackage']);
         Route::post('/package/create', [PackageController::class, 'createPackage']);
