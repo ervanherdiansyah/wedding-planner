@@ -56,7 +56,7 @@ Route::group([
     Route::get('me', [AuthController::class, 'me']);
     Route::post('/register-invited-user', [AuthController::class, 'registerViaInvite']);
 
-    Route::middleware(['jwt', 'check.role:user', 'check.payment'])->group(function () {
+    Route::middleware(['jwt', 'check.role:user,admin', 'check.payment'])->group(function () {
         // Menu
         Route::get('/menu', [MenuController::class, 'getMenu']);
         Route::get('/menu-access', [MenuController::class, 'getMenuAccess']);

@@ -14,12 +14,16 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle($request, Closure $next, $role)
+    public function handle($request, Closure $next, ...$roles)
     {
         $user = JWTAuth::parseToken()->authenticate();
 
-        if ($user->role !== $role) {
-            return response()->json(['message' => 'Unauthorized', 'code' => "VALIDATION_ERROR", 'details' => 'Access denied. You do not have the necessary role to perform this action.'], 401);
+        if (!in_array($user->role, $roles)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+                'code' => "VALIDATION_ERROR",
+                'details' => 'Access denied. You do not have the necessary role to perform this action.'
+            ], 401);
         }
 
         return $next($request);
