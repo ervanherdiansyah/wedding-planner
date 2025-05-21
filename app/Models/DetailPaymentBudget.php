@@ -13,6 +13,8 @@ class DetailPaymentBudget extends Model
     ];
     protected $casts = [
         'list_budgets_id' => 'integer',
+        'paid' => 'integer',
+
     ];
     public function listBudget()
     {

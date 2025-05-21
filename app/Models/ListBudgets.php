@@ -13,6 +13,11 @@ class ListBudgets extends Model
     ];
     protected $casts = [
         'category_budget_id' => 'integer',
+        'estimated_payment' => 'integer',
+        'actual_payment' => 'integer',
+        'paid' => 'integer',
+        'difference' => 'integer',
+        'remaining_payment' => 'integer',
     ];
     public function categoryBudget()
     {
