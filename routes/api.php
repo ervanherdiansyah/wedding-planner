@@ -57,6 +57,7 @@ Route::group([
     Route::middleware(['jwt', 'check.role:user', 'check.payment'])->group(function () {
         // Menu
         Route::get('/menu', [MenuController::class, 'getMenu']);
+        Route::get('/menu-access', [MenuController::class, 'getMenuAccess']);
         Route::post('/menu/create', [MenuController::class, 'createMenu']);
         Route::get('/menu-project-id/{project_id}', [MenuController::class, 'getMenuByProjectId']);
         Route::get('/menu/{id}', [MenuController::class, 'getMenuById']);
@@ -65,6 +66,7 @@ Route::group([
         // Package
         Route::get('/package', [PackageController::class, 'getPackage']);
         Route::post('/package/create', [PackageController::class, 'createPackage']);
+        Route::post('/package-menu/create', [PackageController::class, 'createPackageMenu']);
         Route::get('/package-project-id/{project_id}', [PackageController::class, 'getPackageByProjectId']);
         Route::get('/package/{id}', [PackageController::class, 'getPackageById']);
         Route::put('/package/update/{id}', [PackageController::class, 'updatePackage']);

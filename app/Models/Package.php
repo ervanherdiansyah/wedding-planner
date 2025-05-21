@@ -11,7 +11,11 @@ class Package extends Model
     protected $guarded = ['id'];
     public function menus()
     {
-        return $this->belongsToMany(Menu::class, 'menu_package', 'package_id', 'menu_id')
+        return $this->belongsToMany(Menu::class, 'menu_packages', 'package_id', 'menu_id')
             ->withTimestamps();
+    }
+    public function user()
+    {
+        return $this->hasOne(User::class, 'package');
     }
 }

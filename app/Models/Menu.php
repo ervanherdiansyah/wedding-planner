@@ -13,7 +13,7 @@ class Menu extends Model
 
     public function packages()
     {
-        return $this->belongsToMany(Package::class, 'menu_package', 'menu_id', 'package_id')
+        return $this->belongsToMany(Package::class, 'menu_packages', 'menu_id', 'package_id')
             ->withTimestamps();
     }
 }

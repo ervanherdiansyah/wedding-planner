@@ -91,4 +91,17 @@ class MenuController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+    public function getMenuAccess()
+    {
+        try {
+            $user = auth()->user();
+            $menus = Menu::whereHas('packages', function ($q) use ($user) {
+                $q->where('packages.id', $user->package);
+            })->get();
+            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $menus], 200);
+        } catch (\Exception $th) {
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
 }
