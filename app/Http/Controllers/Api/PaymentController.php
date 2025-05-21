@@ -140,7 +140,7 @@ class PaymentController extends Controller
 
 
             // Return response sukses
-            return response()->json(['message' => 'Payments Updated successfully!', 'data' => $Payments], 200);
+            return response()->json(['message' => 'Payments Status Updated successfully!', 'data' => $Payments], 200);
         } catch (\Illuminate\Validation\ValidationException $e) {
             // Tangkap error validasi dan kembalikan dalam format JSON
             return response()->json(['errors' => $e->errors()], 422);
