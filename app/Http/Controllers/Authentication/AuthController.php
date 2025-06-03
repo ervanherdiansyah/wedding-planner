@@ -363,10 +363,27 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $user = auth()->user()->load('projects');
+        $user = auth()->user();
+
+        // Project yang dimiliki user (owner)
+        $ownedProjects = Projects::where('user_id', $user->id)->get();
+
+        // Project yang diikuti user lewat undangan (membership)
+        $membershipProjects = Projects::whereIn('id', function ($query) use ($user) {
+            $query->select('project_id')
+                ->from('project_memberships')
+                ->where('user_id', $user->id);
+        })->get();
+
+        // Gabungkan keduanya (bisa juga pakai unique jika perlu)
+        $allProjects = $ownedProjects->merge($membershipProjects)->unique('id')->values();
+
         return response()->json([
             'message' => 'Successfully get data user',
-            'data' => $user
+            'data' => [
+                'user' => $user,
+                'projects' => $allProjects
+            ]
         ]);
     }
 
