@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('list_budgets_id')->constrained('list_budgets')->onDelete('cascade');
             $table->string('description')->nullable();
-            $table->integer('deadline')->nullable();
+            $table->date('deadline')->nullable();
             $table->integer('paid')->nullable();
             $table->string('payer')->nullable();
             $table->date('date_payment')->nullable();

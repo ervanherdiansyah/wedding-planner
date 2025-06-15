@@ -48,6 +48,7 @@ class DetailPaymentBudgetController extends Controller
                 'paid' => $request->paid,
                 'payer' => $request->payer,
                 'date_payment' => $request->date_payment,
+                'deadline' => $request->deadline,
                 'type' => $request->type,
             ]);
 
@@ -90,6 +91,7 @@ class DetailPaymentBudgetController extends Controller
                 'paid' => $request->paid,
                 'payer' => $request->payer,
                 'date_payment' => $request->date_payment,
+                'deadline' => $request->deadline,
                 'type' => $request->type,
             ]);
 
