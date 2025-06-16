@@ -170,7 +170,7 @@ class HandoverBudgetItemController extends Controller
 
                     // Filter male
                     $maleItems = $items->where('category', 'male')->values();
-                    if ($maleItems->isNotEmpty()) {
+                    if ($category->type === 'male') {
                         $totalCategoryMale++;
                         $resultMale[] = [
                             'id' => $category->id,
@@ -196,7 +196,7 @@ class HandoverBudgetItemController extends Controller
 
                     // Filter female
                     $femaleItems = $items->where('category', 'female')->values();
-                    if ($femaleItems->isNotEmpty()) {
+                    if ($category->type === 'female') {
                         $totalCategoryFemale++;
                         $resultFemale[] = [
                             'id' => $category->id,

@@ -46,6 +46,7 @@ class CategoryHandoverBudgetController extends Controller
             $CategoryHandover = CategoryHandover::create([
                 'handover_budgets_id' => $request->handover_budgets_id,
                 'title' => $request->title,
+                'type' => $request->type,
             ]);
 
             return response()->json(['message' => 'Create Data Successfully', 'data' => $CategoryHandover], 200);
@@ -69,6 +70,7 @@ class CategoryHandoverBudgetController extends Controller
             // Update data bride
             $CategoryHandover->update([
                 'title' => $request->title,
+                'type' => $request->type,
             ]);
 
             // Return response sukses
