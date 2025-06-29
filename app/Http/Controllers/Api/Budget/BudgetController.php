@@ -36,6 +36,7 @@ class BudgetController extends Controller
                     return [
                         'id' => $budget->id,
                         'project_id' => $budget->project_id,
+                        'budget' => $budget->budget,
                         'estimated_payment' => $budget->estimated_payment,
                         'actual_payment' => $budget->actual_payment,
                         'paid' => $budget->paid,
@@ -108,6 +109,7 @@ class BudgetController extends Controller
 
             $Budgets = Budgets::create([
                 'project_id' => $request->project_id,
+                'budget' => $request->budget,
                 'actual_payment' => $request->actual_payment,
                 'estimated_payment' => $request->estimated_payment,
                 'paid' => 0,
@@ -136,6 +138,7 @@ class BudgetController extends Controller
             }
             // Update data bride
             $Budgets->update([
+                'budget' => $request->budget,
                 'actual_payment' => $request->actual_payment,
                 'estimated_payment' => $request->estimated_payment,
                 'difference' => $request->estimated_payment - $request->actual_payment,
