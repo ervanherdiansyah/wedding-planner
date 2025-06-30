@@ -13,6 +13,7 @@ class Budgets extends Model
     ];
     protected $casts = [
         'project_id' => 'integer',
+        'budget' => 'integer',
         'estimated_payment' => 'integer',
         'actual_payment' => 'integer',
         'paid' => 'integer',
