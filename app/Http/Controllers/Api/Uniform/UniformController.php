@@ -27,7 +27,7 @@ class UniformController extends Controller
             $query = UniformCategories::where('project_id', $project_id);
 
             // Jika ada parameter pencarian title
-            if ($request->has('title') && $request->search != '') {
+            if ($request->has('search') && $request->search != '') {
                 $query->where('title', 'like', '%' . $request->search . '%');
             }
 
