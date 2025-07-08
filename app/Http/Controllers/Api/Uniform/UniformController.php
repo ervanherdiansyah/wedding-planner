@@ -21,13 +21,17 @@ class UniformController extends Controller
         }
     }
 
-    public function getUniformByUniformCategoryId($project_id)
+    public function getUniformByUniformCategoryId(Request $request, $project_id)
     {
         try {
-            // $user = Auth::user();
-            // $project = Projects::where('user_id', $user->id)->first();
-            $uniform = UniformCategories::where('project_id', $project_id)
-                ->with(['uniform']) // Nested eager loading
+            $query = UniformCategories::where('project_id', $project_id);
+
+            // Jika ada parameter pencarian title
+            if ($request->has('title') && $request->search != '') {
+                $query->where('title', 'like', '%' . $request->search . '%');
+            }
+
+            $uniform = $query->with(['uniform'])
                 ->get()
                 ->map(function ($category) {
                     $delivered_items = $category->uniform->where('status', 'Sudah Diberikan')->count();
@@ -49,7 +53,8 @@ class UniformController extends Controller
                         }),
                     ];
                 });
-            $total_category = UniformCategories::where('project_id', $project_id)->count();
+
+            $total_category = $query->count();
 
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $uniform, 'total_category' => $total_category], 200);
         } catch (\Exception $th) {
