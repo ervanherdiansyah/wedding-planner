@@ -17,19 +17,28 @@ class BudgetController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function getBudgetsByProjectId($project_id)
+    public function getBudgetsByProjectId(Request $request, $project_id)
     {
         try {
             $budgets = Budgets::where('project_id', $project_id)
                 ->with(['categoryBudget.listBudget.detailPaymentBudget'])
                 ->get()
-                ->map(function ($budget) {
-                    $totalCategory = $budget->categoryBudget->count();
-                    $totalList = $budget->categoryBudget->flatMap(function ($category) {
+                ->map(function ($budget) use ($request) {
+                    // Filter categoryBudget by title jika ada parameter search
+                    $categoryBudgets = $budget->categoryBudget;
+                    if ($request->has('search') && $request->search != '') {
+                        $search = strtolower($request->search);
+                        $categoryBudgets = $categoryBudgets->filter(function ($category) use ($search) {
+                            return stripos($category->title, $search) !== false;
+                        })->values();
+                    }
+
+                    $totalCategory = $categoryBudgets->count();
+                    $totalList = $categoryBudgets->flatMap(function ($category) {
                         return $category->listBudget;
                     })->count();
 
-                    $totalListStatusTrue = $budget->categoryBudget->flatMap(function ($category) {
+                    $totalListStatusTrue = $categoryBudgets->flatMap(function ($category) {
                         return $category->listBudget->where('status', true);
                     })->count();
 
@@ -46,7 +55,7 @@ class BudgetController extends Controller
                         'total_category_budgets' => $totalCategory,
                         'total_list_budgets' => $totalList,
                         'total_status_true_list_budgets' => $totalListStatusTrue,
-                        'category_budgets' => $budget->categoryBudget->map(function ($category) {
+                        'category_budgets' => $categoryBudgets->map(function ($category) {
                             return [
                                 'id' => $category->id,
                                 'budget_id' => $category->budget_id,

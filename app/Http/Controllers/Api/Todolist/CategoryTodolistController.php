@@ -170,7 +170,7 @@ class CategoryTodolistController extends Controller
     }
 
 
-    public function getAllTodolistsByProject()
+    public function getAllTodolistsByProject(Request $request)
     {
         try {
             $user = Auth::user();
@@ -191,14 +191,35 @@ class CategoryTodolistController extends Controller
             $notCompletedTodolists = Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->where('status', 0)->count();
             $notCompletedSubTodolists = SubTodolists::whereIn('todolist_id', Todolists::whereIn('category_todolist_id', CategoryTodolists::where('project_id', $project->id)->pluck('id'))->pluck('id'))->where('status', 0)->count();
             $totalNotCompleted = $notCompletedSubTodolists;
+
             // Ambil semua data todolist beserta subtodolist
             $todolist = CategoryTodolists::where('project_id', $project->id)
-                ->with(['todolist.subtodolist']) // Nested eager loading
+                ->with(['todolist.subtodolist'])
                 ->get()
-                ->map(function ($category) {
-                    $totalTodolists = $category->todolist->count();
-                    $totalCompletedTodolists = $category->todolist->where('status', 1)->count();
-                    $totalNotCompletedTodolists = $category->todolist->where('status', 0)->count();
+                ->map(function ($category) use ($request) {
+                    $filteredTodolists = $category->todolist;
+
+                    // Filter by todolist name
+                    if ($request->has('search') && $request->search != '') {
+                        $search = strtolower($request->search);
+                        $filteredTodolists = $filteredTodolists->filter(function ($todolist) use ($search) {
+                            // Cek nama todolist
+                            if (stripos($todolist->name, $search) !== false) {
+                                return true;
+                            }
+                            // Cek nama subtodolist
+                            foreach ($todolist->subtodolists as $sub) {
+                                if (stripos($sub->name, $search) !== false) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        })->values();
+                    }
+
+                    $totalTodolists = $filteredTodolists->count();
+                    $totalCompletedTodolists = $filteredTodolists->where('status', 1)->count();
+                    $totalNotCompletedTodolists = $filteredTodolists->where('status', 0)->count();
 
                     return [
                         'id' => $category->id,
@@ -208,10 +229,20 @@ class CategoryTodolistController extends Controller
                         'total_todolists' => $totalTodolists,
                         'total_status_completed' => $totalCompletedTodolists,
                         'total_status_notcompleted' => $totalNotCompletedTodolists,
-                        'todolists' => $category->todolist->map(function ($todolist) {
-                            $totalSubtodolists = $todolist->subtodolist->count();
-                            $totalCompletedSubtodolists = $todolist->subtodolist->where('status', 1)->count();
-                            $totalNotCompletedSubtodolists = $todolist->subtodolist->where('status', 0)->count();
+                        'todolists' => $filteredTodolists->map(function ($todolist) use ($request) {
+                            $filteredSubtodolists = $todolist->subtodolist;
+
+                            // Filter by subtodolist name
+                            if ($request->has('search') && $request->search != '') {
+                                $search = strtolower($request->search);
+                                $filteredSubtodolists = $filteredSubtodolists->filter(function ($sub) use ($search) {
+                                    return stripos($sub->name, $search) !== false;
+                                })->values();
+                            }
+
+                            $totalSubtodolists = $filteredSubtodolists->count();
+                            $totalCompletedSubtodolists = $filteredSubtodolists->where('status', 1)->count();
+                            $totalNotCompletedSubtodolists = $filteredSubtodolists->where('status', 0)->count();
 
                             return [
                                 'id' => $todolist->id,
@@ -221,7 +252,7 @@ class CategoryTodolistController extends Controller
                                 'total_subtodolists' => $totalSubtodolists,
                                 'total_status_completed' => $totalCompletedSubtodolists,
                                 'total_status_notcompleted' => $totalNotCompletedSubtodolists,
-                                'subtodolists' => $todolist->subtodolist->map(function ($subtodolist) {
+                                'subtodolists' => $filteredSubtodolists->map(function ($subtodolist) {
                                     return [
                                         'id' => $subtodolist->id,
                                         'todolist_id' => $subtodolist->todolist_id,
@@ -234,23 +265,13 @@ class CategoryTodolistController extends Controller
                     ];
                 });
 
-
-
-
-            // Return JSON response
             return response()->json([
                 'message' => 'Fetch Data Successfully',
                 'data' => $todolist,
                 'statusCompleted' => [
-                    // 'completed_categories' => $completedCategories,
-                    // 'completed_todolists' => $completedTodolists,
-                    // 'completed_subtodolists' => $completedSubTodolists,
                     'total_completed' => $totalCompleted,
                 ],
                 'statusNotCompleted' => [
-                    // 'not_completed_categories' => $notCompletedCategories,
-                    // 'not_completed_todolists' => $notCompletedTodolists,
-                    // 'not_completed_subtodolists' => $notCompletedSubTodolists,
                     'total_not_completed' => $totalNotCompleted,
                 ],
             ], 200);
