@@ -132,10 +132,9 @@ class HandoverBudgetItemController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
-    public function getAllHandoverBudgetByProjectId($project_id)
+    public function getAllHandoverBudgetByProjectId(Request $request, $project_id)
     {
         try {
-            // Ambil data HandoverBudget beserta relasinya
             $HandoverBudget = HandoverBudget::where('project_id', $project_id)->first();
             $male_budget = $HandoverBudget ? $HandoverBudget->male_budget : null;
             $female_budget = $HandoverBudget ? $HandoverBudget->female_budget : null;
@@ -167,6 +166,18 @@ class HandoverBudgetItemController extends Controller
             foreach ($handoverBudgets as $handover) {
                 foreach ($handover->categoryHandover as $category) {
                     $items = $category->HandoverBudgetItem;
+
+                    // Filter by name
+                    if ($request->has('name') && $request->name != '') {
+                        $items = $items->filter(function ($item) use ($request) {
+                            return stripos($item->name, $request->name) !== false;
+                        });
+                    }
+                    // Filter by category
+                    if ($request->has('category') && $request->category != '') {
+                        $items = $items->where('category', $request->category);
+                    }
+                    $items = $items->values();
 
                     // Filter male
                     $maleItems = $items->where('category', 'male')->values();
