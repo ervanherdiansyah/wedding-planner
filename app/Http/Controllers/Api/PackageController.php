@@ -87,18 +87,17 @@ class PackageController extends Controller
                 'price' => $request->price,
             ]);
 
-            // Update detail package
-            $detailPackage = DetailPackages::where('id', $request->detailPackageId)->first();
-            if ($detailPackage) {
-                $detailPackage->update([
-                    'name_feature' => $request->name_feature,
-                ]);
-            } else {
-                // Jika belum ada, buat baru
-                DetailPackages::create([
-                    'package_id' => $Package->id,
-                    'name_feature' => $request->name_feature,
-                ]);
+            // Hapus semua detail package lama
+            DetailPackages::where('package_id', $Package->id)->delete();
+
+            // Tambahkan detail package baru dari request
+            if (isset($request->detailPackage) && is_array($request->detailPackage)) {
+                foreach ($request->detailPackage as $feature) {
+                    DetailPackages::create([
+                        'package_id' => $Package->id,
+                        'name_feature' => $feature['name_feature'],
+                    ]);
+                }
             }
 
             MenuPackage::where('package_id', $Package->id)->delete();
