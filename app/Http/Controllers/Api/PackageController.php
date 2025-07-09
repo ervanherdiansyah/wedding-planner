@@ -121,6 +121,7 @@ class PackageController extends Controller
     {
         try {
             Package::where('id', $id)->first()->delete();
+            DetailPackages::where('package_id', $id)->delete();
             return response()->json(['message' => 'Delete Data Successfully'], 200);
         } catch (\Throwable $th) {
             //throw $th;
