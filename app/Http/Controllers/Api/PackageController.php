@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\DetailPackages;
 use App\Models\MenuPackage;
 use App\Models\Package;
 use Illuminate\Http\Request;
@@ -12,7 +13,7 @@ class PackageController extends Controller
     public function getPackage()
     {
         try {
-            $Package = Package::get();
+            $Package = Package::with('detailPackage')->get();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Package], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
@@ -21,7 +22,7 @@ class PackageController extends Controller
     public function getPackageByProjectId($project_id)
     {
         try {
-            $Package = Package::where('project_id', $project_id)->get();
+            $Package = Package::with('detailPackage')->where('project_id', $project_id)->get();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Package], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
@@ -30,7 +31,7 @@ class PackageController extends Controller
     public function getPackageById($id)
     {
         try {
-            $Package = Package::where('id', $id)->first();
+            $Package = Package::with('detailPackage')->where('id', $id)->first();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Package], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
@@ -46,6 +47,13 @@ class PackageController extends Controller
                 'description' => $request->description,
                 'price' => $request->price,
             ]);
+
+            foreach ($request->detailPackage as $feature) {
+                DetailPackages::create([
+                    'package_id' => $Package->id,
+                    'name_feature' => $feature['name_feature'],
+                ]);
+            }
 
             foreach ($request['access'] as $access) {
                 MenuPackage::create([
@@ -78,6 +86,20 @@ class PackageController extends Controller
                 'description' => $request->description,
                 'price' => $request->price,
             ]);
+
+            // Update detail package
+            $detailPackage = DetailPackages::where('id', $request->detailPackageId)->first();
+            if ($detailPackage) {
+                $detailPackage->update([
+                    'name_feature' => $request->name_feature,
+                ]);
+            } else {
+                // Jika belum ada, buat baru
+                DetailPackages::create([
+                    'package_id' => $Package->id,
+                    'name_feature' => $request->name_feature,
+                ]);
+            }
 
             MenuPackage::where('package_id', $Package->id)->delete();
             foreach ($request['access'] as $access) {

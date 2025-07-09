@@ -18,4 +18,8 @@ class Package extends Model
     {
         return $this->hasOne(User::class, 'package');
     }
+    public function detailPackage()
+    {
+        return $this->hasMany(DetailPackages::class, 'package_id');
+    }
 }
