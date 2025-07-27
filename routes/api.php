@@ -278,7 +278,7 @@ Route::group([
         Route::get('/all-handover-budget-by-project-id/{project_id}', [HandoverBudgetItemController::class, 'getAllHandoverBudgetByProjectId']);
     });
 });
-Route::get('/payment/{user_id}', [PaymentGatewayController::class, 'payment']);
+Route::get('/payment-gateway/{user_id}', [PaymentGatewayController::class, 'payment']);
 Route::post('/payment-callback', [PaymentGatewayController::class, 'callback']);
 Route::get('/packages', [PackageController::class, 'getPackage']);
 
