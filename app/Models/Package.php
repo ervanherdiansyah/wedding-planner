@@ -14,6 +14,9 @@ class Package extends Model
         return $this->belongsToMany(Menu::class, 'menu_packages', 'package_id', 'menu_id')
             ->withTimestamps();
     }
+    protected $casts = [
+        'price' => 'integer',
+    ];
     public function user()
     {
         return $this->hasOne(User::class, 'package');
