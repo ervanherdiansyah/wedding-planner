@@ -280,6 +280,8 @@ Route::group([
 });
 Route::get('/payment/{user_id}', [PaymentGatewayController::class, 'payment']);
 Route::post('/payment-callback', [PaymentGatewayController::class, 'callback']);
+Route::get('/packages', [PackageController::class, 'getPackage']);
+
 
 Route::fallback(function () {
     return response()->json([
