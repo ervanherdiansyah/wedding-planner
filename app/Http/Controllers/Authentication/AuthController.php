@@ -181,7 +181,7 @@ class AuthController extends Controller
             $detailPayment = DetailPaymentBudget::create([
                 'list_budgets_id' => $listBudget->id,
                 'description' => 'Pembayaran awal ke vendor dekorasi',
-                'deadline' => 7, // misal 7 hari
+                'deadline' => now(), // misal 7 hari
                 'paid' => 3000000,
                 'payer' => 'Panitia',
                 'date_payment' => now(),
