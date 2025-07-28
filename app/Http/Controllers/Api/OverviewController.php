@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brides;
+use App\Models\Budgets;
 use App\Models\CategoryTodolists;
 use App\Models\Events;
 use App\Models\Grooms;
@@ -37,7 +38,13 @@ class OverviewController extends Controller
             // Hitung persentase
             $percentCompleted = $totalTask > 0 ? ($totalCompleted / $totalTask) * 100 : 0;
 
-            return response()->json(['message' => 'Fetch Data Successfully', 'information_bridegroom' => ['bride' => $bride, 'groom' => $groom], "events" => $events, 'progress_list' => ['totalTask' => $totalTask, 'totalCompleted' => $totalCompleted, 'totalNotCompleted' => $totalNotCompleted, 'persenCompleted' => $percentCompleted]], 200);
+            // Budget
+            $budget = Budgets::where('project_id', $project_id)->first();
+            $totalBudget = $budget ? $budget->budget : 0;
+            $paidBudget = $budget ? $budget->paid : 0;
+            $unpaidBudget = $budget ? $budget->unpaid : 0;
+            $remainingBudget = $budget ? $budget->budget - $budget->paid : 0;
+            return response()->json(['message' => 'Fetch Data Successfully', 'information_bridegroom' => ['bride' => $bride, 'groom' => $groom], "events" => $events, 'progress_list' => ['totalTask' => $totalTask, 'totalCompleted' => $totalCompleted, 'totalNotCompleted' => $totalNotCompleted, 'persenCompleted' => $percentCompleted], 'budget' => ['totalBudget' => $totalBudget, 'paidBudget' => $paidBudget, 'unpaidBudget' => $unpaidBudget, 'remainingBudget' => $remainingBudget]], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
