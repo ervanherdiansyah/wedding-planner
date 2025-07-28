@@ -34,7 +34,10 @@ class OverviewController extends Controller
             // Hitung total todolist
             $totalTask = $totalCompleted + $totalNotCompleted;
 
-            return response()->json(['message' => 'Fetch Data Successfully', 'information_bridegroom' => ['bride' => $bride, 'groom' => $groom], "events" => $events, 'progress_list' => ['totalTask' => $totalTask, 'totalCompleted' => $totalCompleted, 'totalNotCompleted' => $totalNotCompleted]], 200);
+            // Hitung persentase
+            $percentCompleted = $totalTask > 0 ? ($totalCompleted / $totalTask) * 100 : 0;
+
+            return response()->json(['message' => 'Fetch Data Successfully', 'information_bridegroom' => ['bride' => $bride, 'groom' => $groom], "events" => $events, 'progress_list' => ['totalTask' => $totalTask, 'totalCompleted' => $totalCompleted, 'totalNotCompleted' => $totalNotCompleted, 'persenCompleted' => $percentCompleted]], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
