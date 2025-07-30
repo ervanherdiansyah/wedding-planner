@@ -42,6 +42,14 @@ class BudgetController extends Controller
                         return $category->listBudget->where('status', true);
                     })->count();
 
+                    // Summary by category
+                    $summary = $categoryBudgets->map(function ($category) {
+                        $totalBudget = $category->listBudget->sum('estimated_payment');
+                        return [
+                            'category' => $category->title,
+                            'totalBudget' => $totalBudget,
+                        ];
+                    });
                     return [
                         'id' => $budget->id,
                         'project_id' => $budget->project_id,
@@ -87,6 +95,7 @@ class BudgetController extends Controller
                                 }),
                             ];
                         }),
+                        'summary' => $summary,
                     ];
                 });
 
