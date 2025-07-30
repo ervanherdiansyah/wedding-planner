@@ -39,12 +39,23 @@ class OverviewController extends Controller
             $percentCompleted = $totalTask > 0 ? ($totalCompleted / $totalTask) * 100 : 0;
 
             // Budget
-            $budget = Budgets::where('project_id', $project_id)->first();
+            $budget = Budgets::with(['categoryBudget.listBudget.detailPaymentBudget'])->where('project_id', $project_id)->first();
             $totalBudget = $budget ? $budget->budget : 0;
             $paidBudget = $budget ? $budget->paid : 0;
             $unpaidBudget = $budget ? $budget->unpaid : 0;
             $remainingBudget = $budget ? $budget->budget - $budget->paid : 0;
-            return response()->json(['message' => 'Fetch Data Successfully', 'information_bridegroom' => ['bride' => $bride, 'groom' => $groom], "events" => $events, 'progress_list' => ['totalTask' => $totalTask, 'totalCompleted' => $totalCompleted, 'totalNotCompleted' => $totalNotCompleted, 'persenCompleted' => $percentCompleted], 'budget' => ['totalBudget' => $totalBudget, 'paidBudget' => $paidBudget, 'unpaidBudget' => $unpaidBudget, 'remainingBudget' => $remainingBudget]], 200);
+            // Summary by category
+            $summary = [];
+            if ($budget && $budget->categoryBudget) {
+                $summary = $budget->categoryBudget->map(function ($category) {
+                    $totalBudget = $category->listBudget->sum('estimated_payment');
+                    return [
+                        'category' => $category->title,
+                        'totalBudget' => $totalBudget,
+                    ];
+                })->values();
+            }
+            return response()->json(['message' => 'Fetch Data Successfully', 'information_bridegroom' => ['bride' => $bride, 'groom' => $groom], "events" => $events, 'progress_list' => ['totalTask' => $totalTask, 'totalCompleted' => $totalCompleted, 'totalNotCompleted' => $totalNotCompleted, 'persenCompleted' => $percentCompleted], 'budget' => ['totalBudget' => $totalBudget, 'paidBudget' => $paidBudget, 'unpaidBudget' => $unpaidBudget, 'remainingBudget' => $remainingBudget, 'summary' => $summary]], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
