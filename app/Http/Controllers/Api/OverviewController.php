@@ -48,7 +48,7 @@ class OverviewController extends Controller
             $summary = [];
             if ($budget && $budget->categoryBudget) {
                 $summary = $budget->categoryBudget->map(function ($category) {
-                    $totalBudget = $category->listBudget->sum('estimated_payment');
+                    $totalBudget = $category->listBudget->sum('actual_payment');
                     return [
                         'category' => $category->title,
                         'totalBudget' => $totalBudget,

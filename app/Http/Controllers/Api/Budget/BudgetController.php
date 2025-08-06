@@ -44,7 +44,7 @@ class BudgetController extends Controller
 
                     // Summary by category
                     $summary = $categoryBudgets->map(function ($category) {
-                        $totalBudget = $category->listBudget->sum('estimated_payment');
+                        $totalBudget = $category->listBudget->sum('actual_payment');
                         return [
                             'category' => $category->title,
                             'totalBudget' => $totalBudget,
