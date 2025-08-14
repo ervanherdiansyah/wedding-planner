@@ -378,6 +378,8 @@ class AuthController extends Controller
         // Gabungkan keduanya (bisa juga pakai unique jika perlu)
         $allProjects = $ownedProjects->merge($membershipProjects)->unique('id')->values();
 
+
+
         return response()->json([
             'message' => 'Successfully get data user',
             'data' => [

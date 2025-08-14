@@ -35,22 +35,60 @@ class MenuController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+    // public function createMenu(Request $request)
+    // {
+    //     try {
+    //         //code...
+    //         Request()->validate([]);
+    //         $Menu = Menu::create([
+    //             'title' => $request->title,
+    //             'slug' => $request->slug,
+    //             'icon' => $request->icon,
+    //             'is_active' => $request->is_active,
+    //         ]);
+
+    //         return response()->json(['message' => 'Create Data Successfully', 'data' => $Menu], 200);
+    //     } catch (\Throwable $th) {
+    //         //throw $th;
+    //         return response()->json(['message' => $th->getMessage()], 500);
+    //     }
+    // }
+
     public function createMenu(Request $request)
     {
         try {
-            //code...
-            Request()->validate([]);
-            $Menu = Menu::create([
-                'title' => $request->title,
-                'slug' => $request->slug,
-                'icon' => $request->icon,
-                'is_active' => $request->is_active,
+            // Validasi: pastikan request adalah array berisi objek dengan field yang dibutuhkan
+            $request->validate([
+                '*.title' => 'required|string|max:255',
+                '*.slug' => 'required|string|max:255',
+                '*.icon' => 'required|string|max:255',
+                '*.is_active' => 'required|boolean'
             ]);
 
-            return response()->json(['message' => 'Create Data Successfully', 'data' => $Menu], 200);
+            $menus = [];
+
+            foreach ($request->all() as $menuData) {
+                $menus[] = [
+                    'title' => $menuData['title'],
+                    'slug' => $menuData['slug'],
+                    'icon' => $menuData['icon'],
+                    'is_active' => $menuData['is_active'],
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ];
+            }
+
+            // Insert banyak sekaligus
+            Menu::insert($menus);
+
+            return response()->json([
+                'message' => 'Create Data Successfully',
+                'data' => $menus
+            ], 200);
         } catch (\Throwable $th) {
-            //throw $th;
-            return response()->json(['message' => $th->getMessage()], 500);
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
         }
     }
 
