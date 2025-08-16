@@ -5,16 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Menu extends Model
+class Permission extends Model
 {
     use HasFactory;
-
     protected $guarded = ['id'];
 
-    public function packages()
+    public function menus()
     {
-        return $this->belongsToMany(Package::class, 'menu_packages')
-            ->withPivot('permission_id')
+        return $this->belongsToMany(Menu::class, 'menu_package_permission')
+            ->withPivot('package_id')
             ->withTimestamps();
     }
 }

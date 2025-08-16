@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('slug')->unique(); // misal: informasi-pengantin
-            $table->string('icon')->nullable(); // simpan nama ikon jika pakai icon library
-            $table->boolean('is_active')->default(true); // aktif atau tidak di admin
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->bigInteger('parent')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('url')->nullable();
+            $table->integer('order')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

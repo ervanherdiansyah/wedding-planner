@@ -310,6 +310,9 @@ class AuthController extends Controller
             DB::commit();
             return response()->json([
                 'message' => 'Success Register',
+                'data' => [
+                    'user' => $user,
+                ]
             ], 200);
         } catch (ValidationException $e) {
             // Menangkap error validasi
@@ -375,19 +378,95 @@ class AuthController extends Controller
                 ->where('user_id', $user->id);
         })->get();
 
-        // Gabungkan keduanya (bisa juga pakai unique jika perlu)
+        $packageId = $user->package;
+
+        // Ambil data assign dari table menu_packages
+        $assigned = collect();
+        if ($packageId) {
+            $assigned = DB::table('menu_packages')
+                ->where('package_id', $packageId)
+                ->get()
+                ->map(fn($row) => [
+                    'menu_id' => $row->menu_id,
+                    'permission_id' => $row->permission_id
+                ]);
+        }
+
+        // Kalau tidak ada package, langsung return access kosong
+        if ($assigned->isEmpty()) {
+            return response()->json([
+                'message' => 'Successfully get data user',
+                'data' => [
+                    'user' => $user,
+                    'projects' => $ownedProjects->merge($membershipProjects)->unique('id')->values(),
+                    'access' => []
+                ]
+            ]);
+        }
+
+        // Ambil menu yang hanya ada di menu_packages
+        $menus = DB::table('menus')
+            ->select('id', 'name', 'slug', 'parent', 'order')
+            ->whereIn('id', collect($assigned)->pluck('menu_id'))
+            ->orderBy('order', 'asc')
+            ->get();
+
+        // Ambil permission yang hanya ada di menu_packages
+        $permissions = DB::table('permissions')
+            ->select('id', 'name')
+            ->whereIn('id', collect($assigned)->pluck('permission_id'))
+            ->get();
+
+        // Recursive function untuk bangun tree menu
+        $buildTree = function ($parentId) use ($menus, $permissions, $assigned, &$buildTree) {
+            return $menus
+                ->where('parent', $parentId)
+                ->sortBy('order')
+                ->map(function ($menu) use ($permissions, $assigned, $buildTree) {
+                    // Ambil permission hanya untuk menu ini
+                    $menuPerms = $permissions->filter(function ($perm) use ($menu, $assigned) {
+                        return $assigned->contains(
+                            fn($a) =>
+                            $a['menu_id'] == $menu->id &&
+                                $a['permission_id'] == $perm->id
+                        );
+                    })->map(function ($perm) {
+                        $action = explode(' ', $perm->name)[0];
+                        return [
+                            'permission_id' => $perm->id,
+                            'permission_name' => $action,
+                            'assigned' => true
+                        ];
+                    })->values();
+
+                    return [
+                        'menu_id' => $menu->id,
+                        'menu_title' => $menu->name,
+                        'menu_slug' => $menu->slug,
+                        'assigned' => true,
+                        'permissions' => $menuPerms,
+                        'children' => $buildTree($menu->id)
+                    ];
+                })->values();
+        };
+
+        // Build menu mulai dari root
+        $result = $buildTree(null);
+
+        // Gabungkan project
         $allProjects = $ownedProjects->merge($membershipProjects)->unique('id')->values();
-
-
 
         return response()->json([
             'message' => 'Successfully get data user',
             'data' => [
                 'user' => $user,
-                'projects' => $allProjects
+                'projects' => $allProjects,
+                'access' => $result,
             ]
         ]);
     }
+
+
 
     /**
      * Log the user out (Invalidate the token).
