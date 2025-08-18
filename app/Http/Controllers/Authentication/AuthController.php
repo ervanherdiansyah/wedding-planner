@@ -67,6 +67,8 @@ class AuthController extends Controller
                 'package' => 'required',
             ]);
 
+            $package = Package::find($request->package);
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -76,19 +78,11 @@ class AuthController extends Controller
                 'role' => "user",
             ]);
 
-            if ($request->package == 1 || $request->package == 2) {
-                $project = Projects::create([
-                    'name' => $request->name,
-                    'invited_project' => 1,
-                    'user_id' => $user->id,
-                ]);
-            } elseif ($request->package == 3) {
-                $project = Projects::create([
-                    'name' => $request->name,
-                    'invited_project' => 4,
-                    'user_id' => $user->id,
-                ]);
-            }
+            $project = Projects::create([
+                'name' => $request->name,
+                'invited_project' => $package->invited,
+                'user_id' => $user->id,
+            ]);
 
             $event = Events::create([
                 'project_id' => $project->id,
@@ -125,7 +119,6 @@ class AuthController extends Controller
                 'name_family' => "Nana",
             ]);
 
-            $package = Package::find($request->package);
             $payment = Payments::create([
                 'user_id' => $user->id,
                 'status' => "Unpaid",
