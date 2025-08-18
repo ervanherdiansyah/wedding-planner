@@ -163,7 +163,7 @@ class MenuController extends Controller
 
             // Ambil semua menu
             $menus = DB::table('menus')
-                ->select('id', 'name', 'slug', 'parent', 'order')
+                ->select('id', 'name', 'slug', 'parent', 'order', 'icon', 'url', 'is_active')
                 ->orderBy('order', 'asc')
                 ->get();
 
@@ -213,9 +213,14 @@ class MenuController extends Controller
 
                         return [
                             'menu_id' => $menu->id,
-                            'menu_title' => $menu->name,
+                            'menu_name' => $menu->name,
                             'menu_slug' => $menu->slug,
-                            'assigned' => $menuAssigned, // assign untuk menu
+                            'menu_parent' => $menu->parent,
+                            'menu_icon' => $menu->icon,
+                            'menu_url' => $menu->url,
+                            'menu_order' => $menu->order,
+                            // 'menu_is_active' => $menu->is_active,
+                            'assigned' => $menuAssigned,
                             'permissions' => $menuPerms,
                             'children' => $buildTree($menu->id)
                         ];

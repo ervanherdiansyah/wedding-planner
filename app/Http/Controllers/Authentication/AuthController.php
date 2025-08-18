@@ -441,8 +441,8 @@ class AuthController extends Controller
                         'menu_url' => $menu->url,
                         'menu_order' => $menu->order,
                         // 'menu_is_active' => $menu->is_active,
-                        'menu_assigned' => true,
-                        'menu_permissions' => $menuPerms,
+                        'assigned' => true,
+                        'permissions' => $menuPerms,
                         'children' => $buildTree($menu->id)
                     ];
                 })->values();
