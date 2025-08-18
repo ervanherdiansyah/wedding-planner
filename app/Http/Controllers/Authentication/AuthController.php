@@ -433,16 +433,16 @@ class AuthController extends Controller
                     })->values();
 
                     return [
-                        'id' => $menu->id,
-                        'name' => $menu->name,
-                        'slug' => $menu->slug,
-                        'parent' => $menu->parent,
-                        'icon' => $menu->icon,
-                        'url' => $menu->url,
-                        'order' => $menu->order,
-                        'is_active' => $menu->is_active,
-                        'assigned' => true,
-                        'permissions' => $menuPerms,
+                        'menu_id' => $menu->id,
+                        'menu_name' => $menu->name,
+                        'menu_slug' => $menu->slug,
+                        'menu_parent' => $menu->parent,
+                        'menu_icon' => $menu->icon,
+                        'menu_url' => $menu->url,
+                        'menu_order' => $menu->order,
+                        'menu_is_active' => $menu->is_active,
+                        'menu_assigned' => true,
+                        'menu_permissions' => $menuPerms,
                         'children' => $buildTree($menu->id)
                     ];
                 })->values();
