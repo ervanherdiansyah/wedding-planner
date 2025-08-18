@@ -26,7 +26,7 @@ class MenuSeeder extends Seeder
         'icon' => 'overviews',
         'is_active' => 1,
         'parent' => 1,
-        'order' => 1,
+        'order' => 0,
         'url' => '/dashboards/overviews',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -36,7 +36,7 @@ class MenuSeeder extends Seeder
         'icon' => null,
         'is_active' => 1,
         'parent' => null,
-        'order' => 2,
+        'order' => 1,
         'url' => '/informasi-pernikahan',
         'permissions' => []
       ],
@@ -46,7 +46,7 @@ class MenuSeeder extends Seeder
         'icon' => 'informasi-pengantin',
         'is_active' => 1,
         'parent' => 3,
-        'order' => 3,
+        'order' => 0,
         'url' => '/informasi-pernikahan/informasi-pengantin',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -56,7 +56,7 @@ class MenuSeeder extends Seeder
         'icon' => 'informasi-acara',
         'is_active' => 1,
         'parent' => 3,
-        'order' => 4,
+        'order' => 1,
         'url' => '/informasi-pernikahan/informasi-acara',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -66,7 +66,7 @@ class MenuSeeder extends Seeder
         'icon' => 'panitia',
         'is_active' => 1,
         'parent' => 3,
-        'order' => 5,
+        'order' => 2,
         'url' => '/informasi-pernikahan/panitia',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -76,7 +76,7 @@ class MenuSeeder extends Seeder
         'icon' => 'list-peserta-foto',
         'is_active' => 1,
         'parent' => 3,
-        'order' => 2,
+        'order' => 3,
         'url' => '/informasi-pernikahan/list-peserta-foto',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -86,7 +86,7 @@ class MenuSeeder extends Seeder
         'icon' => 'list-tamu-vip',
         'is_active' => 1,
         'parent' => 3,
-        'order' => 0,
+        'order' => 4,
         'url' => '/informasi-pernikahan/list-tamu-vip',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -96,7 +96,7 @@ class MenuSeeder extends Seeder
         'icon' => 'song-list',
         'is_active' => 1,
         'parent' => 3,
-        'order' => 1,
+        'order' => 5,
         'url' => '/informasi-pernikahan/song-list',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -116,7 +116,7 @@ class MenuSeeder extends Seeder
         'icon' => 'budget',
         'is_active' => 1,
         'parent' => 10,
-        'order' => 3,
+        'order' => 0,
         'url' => '/perencanaan/budget',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -126,7 +126,7 @@ class MenuSeeder extends Seeder
         'icon' => 'to-do-list',
         'is_active' => 1,
         'parent' => 10,
-        'order' => 4,
+        'order' => 1,
         'url' => '/perencanaan/to-do-list',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -136,7 +136,7 @@ class MenuSeeder extends Seeder
         'icon' => 'vendor',
         'is_active' => 1,
         'parent' => 10,
-        'order' => 5,
+        'order' => 2,
         'url' => '/perencanaan/vendor',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -146,7 +146,7 @@ class MenuSeeder extends Seeder
         'icon' => 'seragam',
         'is_active' => 1,
         'parent' => 10,
-        'order' => 2,
+        'order' => 3,
         'url' => '/perencanaan/seragam',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -156,7 +156,7 @@ class MenuSeeder extends Seeder
         'icon' => 'rundown',
         'is_active' => 1,
         'parent' => 10,
-        'order' => 0,
+        'order' => 4,
         'url' => '/perencanaan/rundown',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
@@ -166,7 +166,7 @@ class MenuSeeder extends Seeder
         'icon' => 'seserahan',
         'is_active' => 1,
         'parent' => 10,
-        'order' => 1,
+        'order' => 5,
         'url' => '/perencanaan/seserahan',
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
