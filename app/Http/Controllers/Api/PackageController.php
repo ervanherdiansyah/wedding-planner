@@ -167,6 +167,7 @@ class PackageController extends Controller
                 MenuPackage::create([
                     'menu_id' => $access['menu_id'],
                     'package_id' => $access['package_id'],
+                    'permission_id' => $access['permission_id'],
                 ]);
             }
 

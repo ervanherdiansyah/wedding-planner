@@ -49,8 +49,6 @@ class MenuController extends Controller
                 'order' => 'nullable|integer',
                 'url' => 'nullable|string|max:255',
                 'is_active' => 'required|boolean',
-                'permissions' => 'required|array',
-                'permissions.*' => 'string|in:Create,Update,Delete'
             ]);
 
             $menu = null;
@@ -101,8 +99,6 @@ class MenuController extends Controller
                 'order' => 'nullable|integer',
                 'url' => 'nullable|string|max:255',
                 'is_active' => 'required|boolean',
-                'permissions' => 'required|array',
-                'permissions.*' => 'string|in:Create,Update,Delete'
             ]);
 
             $menu = Menu::findOrFail($id);
