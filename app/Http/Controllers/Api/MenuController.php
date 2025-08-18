@@ -49,6 +49,7 @@ class MenuController extends Controller
                 'order' => 'nullable|integer',
                 'url' => 'nullable|string|max:255',
                 'is_active' => 'required|boolean',
+                'permissions' => 'nullable|array',
             ]);
 
             $menu = null;
@@ -66,12 +67,14 @@ class MenuController extends Controller
                     'is_active' => $validated['is_active'],
                 ]);
 
-                // Buat Permissions
-                foreach ($validated['permissions'] as $permission) {
-                    $perm = Permission::create([
-                        'name' => "{$permission} {$menu->title}",
-                    ]);
-                    $permissionsCreated[] = $perm;
+                // Buat Permissions jika ada
+                if (!empty($validated['permissions'])) {
+                    foreach ($validated['permissions'] as $permission) {
+                        $perm = Permission::create([
+                            'name' => "{$permission} {$menu->name}",
+                        ]);
+                        $permissionsCreated[] = $perm;
+                    }
                 }
             });
 
