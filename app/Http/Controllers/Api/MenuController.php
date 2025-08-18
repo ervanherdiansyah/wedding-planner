@@ -43,7 +43,7 @@ class MenuController extends Controller
     {
         try {
             $validated = $request->validate([
-                'title' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'icon' => 'nullable|string|max:255',
                 'parent' => 'nullable|integer|exists:menus,id',
                 'order' => 'nullable|integer',
@@ -57,8 +57,8 @@ class MenuController extends Controller
             DB::transaction(function () use ($validated, &$menu, &$permissionsCreated) {
                 // Buat Menu
                 $menu = Menu::create([
-                    'title' => $validated['title'],
-                    'slug' => Str::slug($validated['title']),
+                    'name' => $validated['name'],
+                    'slug' => Str::slug($validated['name']),
                     'icon' => $validated['icon'] ?? null,
                     'parent' => $validated['parent'] ?? null,
                     'order' => $validated['order'] ?? 0,
@@ -93,7 +93,7 @@ class MenuController extends Controller
     {
         try {
             $validated = $request->validate([
-                'title' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'icon' => 'nullable|string|max:255',
                 'parent' => 'nullable|integer|exists:menus,id',
                 'order' => 'nullable|integer',
@@ -107,8 +107,8 @@ class MenuController extends Controller
             DB::transaction(function () use ($validated, &$menu, &$permissionsCreated) {
                 // Update menu
                 $menu->update([
-                    'title' => $validated['title'],
-                    'slug' => Str::slug($validated['title']),
+                    'name' => $validated['name'],
+                    'slug' => Str::slug($validated['name']),
                     'icon' => $validated['icon'] ?? null,
                     'parent' => $validated['parent'] ?? null,
                     'order' => $validated['order'] ?? 0,

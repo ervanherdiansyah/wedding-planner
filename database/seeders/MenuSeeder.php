@@ -11,7 +11,7 @@ class MenuSeeder extends Seeder
   {
     $menusData = [
       [
-        'title' => 'Dashboards',
+        'name' => 'Dashboards',
         'slug' => 'dashboards',
         'icon' => null,
         'is_active' => 1,
@@ -19,7 +19,7 @@ class MenuSeeder extends Seeder
         'permissions' => []
       ],
       [
-        'title' => 'Overviews',
+        'name' => 'Overviews',
         'slug' => 'overviews',
         'icon' => 'overviews',
         'is_active' => 1,
@@ -27,7 +27,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Informasi Pernikahan',
+        'name' => 'Informasi Pernikahan',
         'slug' => 'informasi-pernikahan',
         'icon' => null,
         'is_active' => 1,
@@ -35,7 +35,7 @@ class MenuSeeder extends Seeder
         'permissions' => []
       ],
       [
-        'title' => 'Informasi Pengantin',
+        'name' => 'Informasi Pengantin',
         'slug' => 'informasi-pengantin',
         'icon' => 'informasi-pengantin',
         'is_active' => 1,
@@ -43,7 +43,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Informasi Acara',
+        'name' => 'Informasi Acara',
         'slug' => 'informasi-acara',
         'icon' => 'informasi-acara',
         'is_active' => 1,
@@ -51,7 +51,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Panitia',
+        'name' => 'Panitia',
         'slug' => 'panitia',
         'icon' => 'panitia',
         'is_active' => 1,
@@ -59,7 +59,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'List Peserta Foto',
+        'name' => 'List Peserta Foto',
         'slug' => 'list-peserta-foto',
         'icon' => 'list-peserta-foto',
         'is_active' => 1,
@@ -67,7 +67,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'List Tamu VIP',
+        'name' => 'List Tamu VIP',
         'slug' => 'list-tamu-vip',
         'icon' => 'list-tamu-vip',
         'is_active' => 1,
@@ -75,7 +75,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Song List',
+        'name' => 'Song List',
         'slug' => 'song-list',
         'icon' => 'song-list',
         'is_active' => 1,
@@ -83,7 +83,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Perencanaan',
+        'name' => 'Perencanaan',
         'slug' => 'perencanaan',
         'icon' => null,
         'is_active' => 1,
@@ -91,7 +91,7 @@ class MenuSeeder extends Seeder
         'permissions' => []
       ],
       [
-        'title' => 'Budget',
+        'name' => 'Budget',
         'slug' => 'budget',
         'icon' => 'budget',
         'is_active' => 1,
@@ -99,7 +99,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'To-Do List',
+        'name' => 'To-Do List',
         'slug' => 'to-do-list',
         'icon' => 'to-do-list',
         'is_active' => 1,
@@ -107,7 +107,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Vendor',
+        'name' => 'Vendor',
         'slug' => 'vendor',
         'icon' => 'vendor',
         'is_active' => 1,
@@ -115,7 +115,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Seragam',
+        'name' => 'Seragam',
         'slug' => 'seragam',
         'icon' => 'seragam',
         'is_active' => 1,
@@ -123,7 +123,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Rundown',
+        'name' => 'Rundown',
         'slug' => 'rundown',
         'icon' => 'rundown',
         'is_active' => 1,
@@ -131,7 +131,7 @@ class MenuSeeder extends Seeder
         'permissions' => ['Create', 'Read', 'Update', 'Delete']
       ],
       [
-        'title' => 'Seserahan',
+        'name' => 'Seserahan',
         'slug' => 'seserahan',
         'icon' => 'seserahan',
         'is_active' => 1,
@@ -147,7 +147,7 @@ class MenuSeeder extends Seeder
 
       // Insert menu
       $menuId = DB::table('menus')->insertGetId([
-        'name' => $menuData['title'],
+        'name' => $menuData['name'],
         'slug' => $menuData['slug'],
         'parent' => $menuData['parent'],
         'icon' => $menuData['icon'] ?? null,
