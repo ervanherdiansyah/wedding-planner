@@ -399,7 +399,7 @@ class AuthController extends Controller
 
         // Ambil menu yang hanya ada di menu_packages
         $menus = DB::table('menus')
-            ->select('id', 'name', 'slug', 'parent', 'order')
+            ->select('id', 'name', 'slug', 'parent', 'order', 'icon', 'url', 'is_active')
             ->whereIn('id', collect($assigned)->pluck('menu_id'))
             ->orderBy('order', 'asc')
             ->get();
@@ -440,7 +440,7 @@ class AuthController extends Controller
                         'menu_icon' => $menu->icon,
                         'menu_url' => $menu->url,
                         'menu_order' => $menu->order,
-                        'menu_is_active' => $menu->is_active,
+                        // 'menu_is_active' => $menu->is_active,
                         'menu_assigned' => true,
                         'menu_permissions' => $menuPerms,
                         'children' => $buildTree($menu->id)
