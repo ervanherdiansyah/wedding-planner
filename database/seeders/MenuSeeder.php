@@ -267,6 +267,8 @@ class MenuSeeder extends Seeder
         'slug' => $menuData['slug'],
         'parent' => $menuData['parent'],
         'icon' => $menuData['icon'] ?? null,
+        'order' => $menuData['order'] ?? null,
+        'url' => $menuData['url'] ?? null,
         'is_active' => $menuData['is_active'],
         'created_at' => now(),
         'updated_at' => now()
