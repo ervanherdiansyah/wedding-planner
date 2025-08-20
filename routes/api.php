@@ -281,6 +281,8 @@ Route::group([
 Route::get('/payment-gateway/{user_id}', [PaymentGatewayController::class, 'payment']);
 Route::post('/payment-callback', [PaymentGatewayController::class, 'callback']);
 Route::get('/packages', [PackageController::class, 'getPackage']);
+Route::get('/status-payments/{user_id}', [PaymentController::class, 'getStatusPaymentByUserId']);
+
 
 
 Route::fallback(function () {

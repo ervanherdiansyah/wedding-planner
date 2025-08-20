@@ -149,4 +149,27 @@ class PaymentController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+    public function getStatusPaymentByUserId($user_id)
+    {
+        try {
+            $payment = Payments::where('user_id', $user_id)->latest()->first();
+
+            if (!$payment) {
+                return response()->json([
+                    'message' => 'No payment record found for this user',
+                    'data' => null
+                ], 404);
+            }
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $payment
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
