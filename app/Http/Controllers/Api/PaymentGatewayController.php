@@ -37,7 +37,7 @@ class PaymentGatewayController extends Controller
             // Set 3DS transaction for credit card to true
             \Midtrans\Config::$is3ds = true;
 
-            \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/callback';
+            \Midtrans\Config::$overrideNotifUrl = config('app.url') . '/api/payment-callback';
             // \Midtrans\Config::$overrideNotifUrl = 'https://backend.alodia.site/api/callback';
 
             $order_id = $payment->id;
