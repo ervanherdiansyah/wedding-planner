@@ -11,7 +11,7 @@ class PaymentController extends Controller
     public function getPayments(Request $request)
     {
         try {
-            $query = Payments::query();
+            $query = Payments::with('users')->query();
 
             if (!empty($request->keyword)) {
                 $query->where('name', 'like', '%' . $request->keyword . '%')
@@ -37,7 +37,7 @@ class PaymentController extends Controller
     public function getPaymentsById($id)
     {
         try {
-            $Payments = Payments::where('id', $id)->first();
+            $Payments = Payments::with('users')->where('id', $id)->first();
             return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Payments], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
