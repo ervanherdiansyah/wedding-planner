@@ -24,25 +24,26 @@ class UniformController extends Controller
     public function getUniformByUniformCategoryId(Request $request, $project_id)
     {
         try {
-            $query = UniformCategories::where('project_id', $project_id)->with(['uniform' => function ($q) use ($request) {
-                if ($request->has('status') && $request->status != '') {
-                    $q->where('uniform_status', $request->status);
-                }
-            }]);
+            $query = UniformCategories::where('project_id', $project_id);
 
             // Filter keyword ke title
             if ($request->has('title') && $request->title != '') {
                 $query->where('title', 'like', '%' . $request->title . '%');
             }
 
-            // Filter status ke uniform
+            // Filter status ke uniform - hanya ambil kategori yang memiliki uniform dengan status tertentu
             // if ($request->has('status') && $request->status != '') {
             //     $query->whereHas('uniform', function ($q) use ($request) {
             //         $q->where('status', $request->status);
             //     });
             // }
 
-            $uniform = $query->with(['uniform'])
+            $uniform = $query->with(['uniform' => function ($q) use ($request) {
+                // Filter uniform berdasarkan status jika ada parameter status
+                if ($request->has('status') && $request->status != '') {
+                    $q->where('status', $request->status);
+                }
+            }])
                 ->get()
                 ->map(function ($category) {
                     $delivered_items = $category->uniform->where('status', 'Sudah Diberikan')->count();
@@ -57,7 +58,7 @@ class UniformController extends Controller
                                 'id' => $uniform->id,
                                 'category_id' => $uniform->uniform_category_id,
                                 'uniform_name' => $uniform->name,
-                                'uniform_status' => $uniform->status,
+                                'uniform_status' => $uniform->status, // Konsisten menggunakan 'status'
                                 'uniform_attire' => $uniform->attire,
                                 'uniform_note' => $uniform->note,
                             ];
@@ -65,7 +66,16 @@ class UniformController extends Controller
                     ];
                 });
 
-            $total_category = $query->count();
+            $total_category = UniformCategories::where('project_id', $project_id)
+                ->when($request->has('title') && $request->title != '', function ($q) use ($request) {
+                    $q->where('title', 'like', '%' . $request->title . '%');
+                })
+                ->when($request->has('status') && $request->status != '', function ($q) use ($request) {
+                    $q->whereHas('uniform', function ($subQuery) use ($request) {
+                        $subQuery->where('status', $request->status);
+                    });
+                })
+                ->count();
 
             return response()->json([
                 'message' => 'Fetch Data Successfully',
