@@ -11,7 +11,7 @@ class PaymentController extends Controller
     public function getPayments(Request $request)
     {
         try {
-            $query = Payments::with('users')->query();
+            $query = Payments::with('users');
 
             if (!empty($request->keyword)) {
                 $query->where('name', 'like', '%' . $request->keyword . '%')
