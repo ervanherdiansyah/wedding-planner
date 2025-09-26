@@ -138,17 +138,24 @@ class HandoverBudgetItemController extends Controller
             $query = HandoverBudget::where('project_id', $project_id)
                 ->with(['categoryHandover.HandoverBudgetItem']);
 
-            // Filter by gender (male / female)
+            // Filter by gender (male / female) - berdasarkan category di HandoverBudgetItem
             if ($request->has('gender') && in_array($request->gender, ['male', 'female'])) {
-                $query->whereHas('categoryHandover', function ($q) use ($request) {
-                    $q->where('type', $request->gender);
+                $query->whereHas('categoryHandover.HandoverBudgetItem', function ($q) use ($request) {
+                    $q->where('category', $request->gender);
                 });
             }
 
-            // Filter by status (0/1 atau sesuai data)
+            // Filter by status (0/1) - berdasarkan status di HandoverBudgetItem
             if ($request->has('status') && $request->status !== '') {
                 $query->whereHas('categoryHandover.HandoverBudgetItem', function ($q) use ($request) {
-                    $q->where('status', $request->status);
+                    $q->where('status', (int)$request->status);
+                });
+            }
+
+            // Filter by name - berdasarkan name di HandoverBudgetItem
+            if ($request->has('name') && $request->name !== '') {
+                $query->whereHas('categoryHandover.HandoverBudgetItem', function ($q) use ($request) {
+                    $q->where('name', 'like', '%' . $request->name . '%');
                 });
             }
 
@@ -179,23 +186,34 @@ class HandoverBudgetItemController extends Controller
                 foreach ($handover->categoryHandover as $category) {
                     $items = $category->HandoverBudgetItem;
 
-                    // Filter by name
-                    if ($request->has('name') && $request->name != '') {
-                        $items = $items->filter(function ($item) use ($request) {
-                            return stripos($item->name, $request->name) !== false;
-                        });
-                    }
+                    // Apply filters to items
+                    $filteredItems = $items->filter(function ($item) use ($request) {
+                        $matchesFilter = true;
 
-                    // Filter by category
-                    if ($request->has('category') && $request->category != '') {
-                        $items = $items->where('category', $request->category);
-                    }
+                        // Filter by name
+                        if ($request->has('name') && $request->name !== '') {
+                            $matchesFilter = $matchesFilter && (stripos($item->name, $request->name) !== false);
+                        }
 
-                    $items = $items->values();
+                        // Filter by gender (category field)
+                        if ($request->has('gender') && $request->gender !== '') {
+                            $matchesFilter = $matchesFilter && ($item->category === $request->gender);
+                        }
 
-                    // Male
-                    $maleItems = $items->where('category', 'male')->values();
-                    if ($category->type === 'male') {
+                        // Filter by status
+                        if ($request->has('status') && $request->status !== '') {
+                            $matchesFilter = $matchesFilter && ($item->status == (int)$request->status);
+                        }
+
+                        return $matchesFilter;
+                    });
+
+                    // Separate male and female items
+                    $maleItems = $filteredItems->where('category', 'male')->values();
+                    $femaleItems = $filteredItems->where('category', 'female')->values();
+
+                    // Process Male Items
+                    if ($maleItems->count() > 0) {
                         $totalCategoryMale++;
                         $resultMale[] = [
                             'id' => $category->id,
@@ -216,12 +234,11 @@ class HandoverBudgetItemController extends Controller
                             }),
                         ];
                         $totalMale += $maleItems->count();
-                        $buyMale += $maleItems->where('status', true)->count();
+                        $buyMale += $maleItems->where('status', 1)->count(); // status = 1 untuk sudah dibeli
                     }
 
-                    // Female
-                    $femaleItems = $items->where('category', 'female')->values();
-                    if ($category->type === 'female') {
+                    // Process Female Items
+                    if ($femaleItems->count() > 0) {
                         $totalCategoryFemale++;
                         $resultFemale[] = [
                             'id' => $category->id,
@@ -242,7 +259,7 @@ class HandoverBudgetItemController extends Controller
                             }),
                         ];
                         $totalFemale += $femaleItems->count();
-                        $buyFemale += $femaleItems->where('status', true)->count();
+                        $buyFemale += $femaleItems->where('status', 1)->count(); // status = 1 untuk sudah dibeli
                     }
                 }
             }
