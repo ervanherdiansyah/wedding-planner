@@ -26,10 +26,16 @@ class UniformController extends Controller
         try {
             $query = UniformCategories::where('project_id', $project_id);
 
-            // Jika ada parameter pencarian title
+            // Filter keyword ke title
             if ($request->has('keyword') && $request->keyword != '') {
-                $query->where('title', 'like', '%' . $request->keyword . '%')
-                    ->orWhere('status', 'like', '%' . $request->keyword . '%');
+                $query->where('title', 'like', '%' . $request->keyword . '%');
+            }
+
+            // Filter status ke uniform
+            if ($request->has('status') && $request->status != '') {
+                $query->whereHas('uniform', function ($q) use ($request) {
+                    $q->where('status', $request->status);
+                });
             }
 
             $uniform = $query->with(['uniform'])
@@ -57,11 +63,16 @@ class UniformController extends Controller
 
             $total_category = $query->count();
 
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $uniform, 'total_category' => $total_category], 200);
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $uniform,
+                'total_category' => $total_category
+            ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function getUniformById($id)
     {
         try {

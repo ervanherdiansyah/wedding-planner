@@ -135,7 +135,28 @@ class HandoverBudgetItemController extends Controller
     public function getAllHandoverBudgetByProjectId(Request $request, $project_id)
     {
         try {
-            $HandoverBudget = HandoverBudget::where('project_id', $project_id)->first();
+            $query = HandoverBudget::where('project_id', $project_id)
+                ->with(['categoryHandover.HandoverBudgetItem']);
+
+            // Filter by gender (male / female)
+            if ($request->has('gender') && in_array($request->gender, ['male', 'female'])) {
+                $query->whereHas('categoryHandover', function ($q) use ($request) {
+                    $q->where('type', $request->gender);
+                });
+            }
+
+            // Filter by status (0/1 atau sesuai data)
+            if ($request->has('status') && $request->status !== '') {
+                $query->whereHas('categoryHandover.HandoverBudgetItem', function ($q) use ($request) {
+                    $q->where('status', $request->status);
+                });
+            }
+
+            $handoverBudgets = $query->get();
+
+            // Ambil budget pertama (karena sepertinya satu project_id satu budget)
+            $HandoverBudget = $handoverBudgets->first();
+
             $male_budget = $HandoverBudget ? $HandoverBudget->male_budget : null;
             $female_budget = $HandoverBudget ? $HandoverBudget->female_budget : null;
             $actual_male_budget = $HandoverBudget ? $HandoverBudget->used_budget_male : null;
@@ -149,19 +170,10 @@ class HandoverBudgetItemController extends Controller
                 ? $female_budget - $actual_female_budget
                 : null;
 
-            $handoverBudgets = HandoverBudget::where('project_id', $project_id)
-                ->with(['categoryHandover.HandoverBudgetItem'])
-                ->get();
-
             $resultMale = [];
             $resultFemale = [];
-
-            $totalMale = 0;
-            $buyMale = 0;
-            $totalFemale = 0;
-            $buyFemale = 0;
-            $totalCategoryMale = 0;
-            $totalCategoryFemale = 0;
+            $totalMale = $buyMale = $totalFemale = $buyFemale = 0;
+            $totalCategoryMale = $totalCategoryFemale = 0;
 
             foreach ($handoverBudgets as $handover) {
                 foreach ($handover->categoryHandover as $category) {
@@ -173,13 +185,15 @@ class HandoverBudgetItemController extends Controller
                             return stripos($item->name, $request->name) !== false;
                         });
                     }
+
                     // Filter by category
                     if ($request->has('category') && $request->category != '') {
                         $items = $items->where('category', $request->category);
                     }
+
                     $items = $items->values();
 
-                    // Filter male
+                    // Male
                     $maleItems = $items->where('category', 'male')->values();
                     if ($category->type === 'male') {
                         $totalCategoryMale++;
@@ -205,7 +219,7 @@ class HandoverBudgetItemController extends Controller
                         $buyMale += $maleItems->where('status', true)->count();
                     }
 
-                    // Filter female
+                    // Female
                     $femaleItems = $items->where('category', 'female')->values();
                     if ($category->type === 'female') {
                         $totalCategoryFemale++;
@@ -233,7 +247,6 @@ class HandoverBudgetItemController extends Controller
                 }
             }
 
-
             return response()->json([
                 'message' => 'Fetch Data Successfully',
                 'data' => [
@@ -257,8 +270,6 @@ class HandoverBudgetItemController extends Controller
                         'listHandover' => $resultFemale,
                     ],
                 ],
-
-                // 'total_category' => $handoverBudgets->count(),
             ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
