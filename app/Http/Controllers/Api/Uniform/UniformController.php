@@ -24,15 +24,23 @@ class UniformController extends Controller
     public function getUniformByUniformCategoryId(Request $request, $project_id)
     {
         try {
-            $query = UniformCategories::with(['uniform' => function ($q) use ($request) {
+            $query = UniformCategories::where('project_id', $project_id)->with(['uniform' => function ($q) use ($request) {
                 if ($request->has('status') && $request->status != '') {
                     $q->where('uniform_status', $request->status);
                 }
             }]);
 
+            // Filter keyword ke title
             if ($request->has('title') && $request->title != '') {
                 $query->where('title', 'like', '%' . $request->title . '%');
             }
+
+            // Filter status ke uniform
+            // if ($request->has('status') && $request->status != '') {
+            //     $query->whereHas('uniform', function ($q) use ($request) {
+            //         $q->where('status', $request->status);
+            //     });
+            // }
 
             $uniform = $query->with(['uniform'])
                 ->get()
