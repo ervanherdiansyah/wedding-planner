@@ -7,6 +7,7 @@ use App\Models\CategoryHandover;
 use App\Models\HandoverBudget;
 use App\Models\HandoverBudgetItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HandoverBudgetItemController extends Controller
 {
@@ -337,22 +338,31 @@ class HandoverBudgetItemController extends Controller
     {
         try {
             $request->validate([
-                'items' => 'required|array',
+                'items' => 'required|array|size:2', // harus 2 data untuk swap
                 'items.*.id' => 'required|exists:handover_budget_items,id',
-                'items.*.order' => 'required|integer',
-                'items.*.category_handover_budgets_id' => 'required|exists:category_handovers,id'
+                'items.*.category_handover_budgets_id' => 'required|exists:category_handovers,id',
+                'items.*.category' => 'required|in:male,female'
             ]);
 
-            foreach ($request->items as $item) {
-                HandoverBudgetItem::where('id', $item['id'])
-                    ->update([
-                        'order' => $item['order'],
-                        'category_handover_budgets_id' => $item['category_handover_budgets_id']
-                    ]);
-            }
+            DB::transaction(function () use ($request) {
+                $first = HandoverBudgetItem::where('id', $request->items[0]['id'])
+                    ->where('category_handover_budgets_id', $request->items[0]['category_handover_budgets_id'])
+                    ->where('category', $request->items[0]['category'])
+                    ->firstOrFail();
+
+                $second = HandoverBudgetItem::where('id', $request->items[1]['id'])
+                    ->where('category_handover_budgets_id', $request->items[1]['category_handover_budgets_id'])
+                    ->where('category', $request->items[1]['category'])
+                    ->firstOrFail();
+
+                // swap order
+                $tempOrder = $first->order;
+                $first->update(['order' => $second->order]);
+                $second->update(['order' => $tempOrder]);
+            });
 
             return response()->json([
-                'message' => 'Item order updated successfully'
+                'message' => 'Item order swapped successfully'
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
