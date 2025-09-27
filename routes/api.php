@@ -259,12 +259,13 @@ Route::group([
         Route::get('/handover-budget/{id}', [HandoverBudgetController::class, 'getHandoverBudgetById']);
         Route::put('/handover-budget/update/{id}', [HandoverBudgetController::class, 'updateHandoverBudget']);
         Route::delete('/handover-budget/delete/{id}', [HandoverBudgetController::class, 'deleteHandoverBudget']);
-        // Handover Budget
+        // Category Handover Budget
         Route::get('/category-handover-budget', [CategoryHandoverBudgetController::class, 'getCategoryHandover']);
         Route::post('/category-handover-budget/create', [CategoryHandoverBudgetController::class, 'createCategoryHandover']);
         Route::get('/category-handover-budget-by-handover-budget-id/{handover_budget_id}', [CategoryHandoverBudgetController::class, 'getCategoryHandoverByHandoverBudgetId']);
         Route::get('/category-handover-budget/{id}', [CategoryHandoverBudgetController::class, 'getCategoryHandoverById']);
         Route::put('/category-handover-budget/update/{id}', [CategoryHandoverBudgetController::class, 'updateCategoryHandover']);
+        Route::post('/category-handover-budget/order', [CategoryHandoverBudgetController::class, 'updateCategoryOrder']);
         Route::delete('/category-handover-budget/delete/{id}', [CategoryHandoverBudgetController::class, 'deleteCategoryHandover']);
         // Handover Budget Item
         Route::get('/handover-budget-item', [HandoverBudgetItemController::class, 'getHandoverBudgetItem']);
@@ -273,6 +274,7 @@ Route::group([
         Route::get('/handover-budget-item/{id}', [HandoverBudgetItemController::class, 'getHandoverBudgetItemById']);
         Route::put('/handover-budget-item/update/{id}', [HandoverBudgetItemController::class, 'updateHandoverBudgetItem']);
         Route::delete('/handover-budget-item/delete/{id}', [HandoverBudgetItemController::class, 'deleteHandoverBudgetItem']);
+        Route::post('/handover-budget-item/order', [HandoverBudgetItemController::class, 'updateItemOrder']);
 
         // All Handover Budget
         Route::get('/all-handover-budget-by-project-id/{project_id}', [HandoverBudgetItemController::class, 'getAllHandoverBudgetByProjectId']);
