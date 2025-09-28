@@ -175,6 +175,7 @@ class PackageController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric',
+                'invited' => 'required|numeric',
                 'detailPackage' => 'array',
                 'detailPackage.*.name_feature' => 'required|string',
                 'access' => 'array',
@@ -187,6 +188,7 @@ class PackageController extends Controller
                 'name' => $request->name,
                 'description' => $request->description,
                 'price' => $request->price,
+                'invited' => $request->invited,
             ]);
 
             // Simpan detail fitur package
@@ -224,9 +226,12 @@ class PackageController extends Controller
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'price' => 'required|numeric',
+                'invited' => 'required|numeric',
                 'detailPackage' => 'nullable|array',
+                'detailPackage.*.id' => 'nullable|integer|exists:detail_packages,id',
                 'detailPackage.*.name_feature' => 'required|string',
                 'access' => 'nullable|array',
+                'access.*.id' => 'nullable|integer|exists:menu_packages,id',
                 'access.*.menu_id' => 'required|integer|exists:menus,id',
                 'access.*.permission_id' => 'required|integer|exists:permissions,id',
             ]);
@@ -234,33 +239,82 @@ class PackageController extends Controller
             $Package = Package::findOrFail($id);
 
             DB::transaction(function () use ($request, $Package) {
+                // Update package utama
                 $Package->update([
                     'name' => $request->name,
                     'description' => $request->description,
                     'price' => $request->price,
+                    'invited' => $request->invited,
+
                 ]);
 
-                DetailPackages::where('package_id', $Package->id)->delete();
+                /**
+                 * =========================
+                 *  SYNC DETAIL PACKAGES
+                 * =========================
+                 */
+                $detailIds = collect($request->detailPackage)->pluck('id')->filter()->toArray();
+
+                DetailPackages::where('package_id', $Package->id)
+                    ->whereNotIn('id', $detailIds)
+                    ->delete();
+
                 if (!empty($request->detailPackage)) {
                     foreach ($request->detailPackage as $feature) {
-                        DetailPackages::create([
-                            'package_id' => $Package->id,
-                            'name_feature' => $feature['name_feature'],
-                        ]);
+                        if (!empty($feature['id'])) {
+                            DetailPackages::where('id', $feature['id'])
+                                ->update([
+                                    'name_feature' => $feature['name_feature'],
+                                ]);
+                        } else {
+                            DetailPackages::create([
+                                'package_id' => $Package->id,
+                                'name_feature' => $feature['name_feature'],
+                            ]);
+                        }
                     }
                 }
 
-                MenuPackage::where('package_id', $Package->id)->delete();
+                /**
+                 * =========================
+                 *  SYNC MENU PACKAGES
+                 * =========================
+                 */
+                $accessIds = collect($request->access)->pluck('id')->filter()->toArray();
+
+                MenuPackage::where('package_id', $Package->id)
+                    ->whereNotIn('id', $accessIds)
+                    ->delete();
+
                 if (!empty($request->access)) {
                     foreach ($request->access as $access) {
-                        MenuPackage::create([
-                            'menu_id' => $access['menu_id'],
-                            'package_id' => $Package->id,
-                            'permission_id' => $access['permission_id'],
-                        ]);
+                        if (!empty($access['id'])) {
+                            MenuPackage::where('id', $access['id'])
+                                ->update([
+                                    'menu_id' => $access['menu_id'],
+                                    'permission_id' => $access['permission_id'],
+                                ]);
+                        } else {
+                            MenuPackage::create([
+                                'package_id' => $Package->id,
+                                'menu_id' => $access['menu_id'],
+                                'permission_id' => $access['permission_id'],
+                            ]);
+                        }
                     }
                 }
             });
+
+            // Refresh package dengan relasi + nested relasi menu & permission
+            $Package->load([
+                'detailPackages:id,package_id,name_feature',
+                'menuPackages' => function ($q) {
+                    $q->with([
+                        'menu:id,name,slug,icon,url,parent,order',
+                        'permission:id,name'
+                    ]);
+                }
+            ]);
 
             return response()->json([
                 'message' => 'Updated data successfully',
@@ -273,6 +327,7 @@ class PackageController extends Controller
             ], 500);
         }
     }
+
 
 
     public function deletePackage($id)

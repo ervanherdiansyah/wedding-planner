@@ -217,16 +217,12 @@ class MenuController extends Controller
                     'is_active' => $validated['is_active'],
                 ]);
 
-                // Delete old permissions for this menu
-                Permission::where('name', 'like', "%{$menu->name}%")->delete();
-
-                // Create new permissions with menu name
                 if (!empty($validated['permissions'])) {
                     foreach ($validated['permissions'] as $permission) {
-                        $perm = Permission::create([
-                            'name' => "{$permission} {$validated['name']}", // Use menu name here
-                        ]);
-                        $permissionsCreated[] = $perm;
+                        Permission::updateOrCreate(
+                            ['name' => "{$permission} {$menu->getOriginal('name')}"],
+                            ['name' => "{$permission} {$validated['name']}"]
+                        );
                     }
                 }
             });
