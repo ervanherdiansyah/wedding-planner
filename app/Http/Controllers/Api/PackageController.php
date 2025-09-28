@@ -15,7 +15,7 @@ class PackageController extends Controller
     {
         try {
             $Package = Package::with(['detailPackage', 'menus' => function ($query) {
-                $query->orderBy('order', 'asc');
+                // $query->orderBy('order', 'asc');
             }])
                 ->get()
                 ->map(function ($package) {
@@ -115,7 +115,7 @@ class PackageController extends Controller
     {
         try {
             $Package = Package::with(['detailPackage', 'menus' => function ($query) {
-                $query->orderBy('order', 'asc');
+                // $query->orderBy('order', 'asc');
             }])
                 ->where('id', $id)
                 ->get()
