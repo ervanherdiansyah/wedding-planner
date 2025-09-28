@@ -114,41 +114,52 @@ class PackageController extends Controller
     public function getPackageById($id)
     {
         try {
-            $package = Package::with(['detailPackage', 'menus.permissions' => function ($query) {
-                $query->select('permissions.id', 'permissions.name');
+            $Package = Package::with(['detailPackage', 'menus' => function ($query) {
+                $query->orderBy('order', 'asc');
             }])
-                ->findOrFail($id);
-
-            $data = [
-                'id' => $package->id,
-                'name' => $package->name,
-                'description' => $package->description,
-                'price' => $package->price,
-                'detail_package' => $package->detailPackage,
-                'menus' => $package->menus->map(function ($menu) {
+                ->where('id', $id)
+                ->get()
+                ->map(function ($package) {
                     return [
-                        'id' => $menu->id,
-                        'name' => $menu->name,
-                        'slug' => $menu->slug,
-                        'parent' => $menu->parent,
-                        'icon' => $menu->icon,
-                        'url' => $menu->url,
-                        'order' => $menu->order,
-                        'is_active' => $menu->is_active,
-                        'permissions' => $menu->permissions->map(function ($permission) {
+                        'id' => $package->id,
+                        'name' => $package->name,
+                        'description' => $package->description,
+                        'price' => $package->price,
+                        'detail_package' => $package->detailPackage,
+                        'menus' => $package->menus->map(function ($menu) use ($package) {
+                            // Get permissions from pivot table for this specific package and menu
+                            $permissions = DB::table('menu_packages')
+                                ->join('permissions', 'menu_packages.permission_id', '=', 'permissions.id')
+                                ->where('menu_packages.package_id', $package->id)
+                                ->where('menu_packages.menu_id', $menu->id)
+                                ->select('permissions.id', 'permissions.name')
+                                ->get()
+                                ->map(function ($permission) {
+                                    return [
+                                        'id' => $permission->id,
+                                        'name' => $permission->name,
+                                        'action' => explode(' ', $permission->name)[0]
+                                    ];
+                                });
+
                             return [
-                                'id' => $permission->id,
-                                'name' => $permission->name,
-                                'action' => explode(' ', $permission->name)[0]
+                                'id' => $menu->id,
+                                'name' => $menu->name,
+                                'slug' => $menu->slug,
+                                'parent' => $menu->parent,
+                                'icon' => $menu->icon,
+                                'url' => $menu->url,
+                                'order' => $menu->order,
+                                'is_active' => $menu->is_active,
+                                'permissions' => $permissions
                             ];
                         })
                     ];
-                })
-            ];
+                });
 
             return response()->json([
                 'message' => 'Fetch Data Successfully',
-                'data' => $data
+                'data' => $Package
             ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
