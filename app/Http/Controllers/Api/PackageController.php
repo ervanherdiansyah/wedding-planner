@@ -24,6 +24,7 @@ class PackageController extends Controller
                         'name' => $package->name,
                         'description' => $package->description,
                         'price' => $package->price,
+                        'invited' => $package->invited,
                         'detail_package' => $package->detailPackage,
                         'menus' => $package->menus->map(function ($menu) use ($package) {
                             // Get permissions from pivot table for this specific package and menu
@@ -125,6 +126,7 @@ class PackageController extends Controller
                         'name' => $package->name,
                         'description' => $package->description,
                         'price' => $package->price,
+                        'invited' => $package->invited,
                         'detail_package' => $package->detailPackage,
                         'menus' => $package->menus->map(function ($menu) use ($package) {
                             // Get permissions from pivot table for this specific package and menu
