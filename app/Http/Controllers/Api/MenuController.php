@@ -347,6 +347,49 @@ class MenuController extends Controller
         }
     }
 
+    public function getParentMenus()
+    {
+        try {
+            $parentMenus = Menu::whereNull('parent')
+                ->orderBy('order', 'asc')
+                ->get()
+                ->map(function ($menu) {
+                    // Get all permissions that contain menu name
+                    $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
+                        ->get()
+                        ->map(function ($permission) {
+                            return [
+                                'id' => $permission->id,
+                                'name' => $permission->name,
+                                'action' => explode(' ', $permission->name)[0]
+                            ];
+                        });
+
+                    return [
+                        'id' => $menu->id,
+                        'name' => $menu->name,
+                        'slug' => $menu->slug,
+                        'icon' => $menu->icon,
+                        'url' => $menu->url,
+                        'order' => $menu->order,
+                        'is_active' => $menu->is_active,
+                        'permissions' => $permissions,
+                        'created_at' => $menu->created_at,
+                        'updated_at' => $menu->updated_at
+                    ];
+                });
+
+            return response()->json([
+                'message' => 'Fetch Parent Menus Successfully',
+                'data' => $parentMenus
+            ], 200);
+        } catch (\Exception $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
+    }
+
     // public function getMenuAccess()
     // {
     //     try {
