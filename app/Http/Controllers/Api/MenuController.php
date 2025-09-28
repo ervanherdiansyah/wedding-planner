@@ -11,134 +11,90 @@ use Illuminate\Support\Str;
 
 class MenuController extends Controller
 {
-
-    private function buildMenuTree($menus, $parentId = null)
-    {
-        return $menus
-            ->where('parent_id', $parentId)
-            ->sortBy('order') // ASC order
-            ->values()
-            ->map(function ($menu) use ($menus) {
-                $menu->children = $this->buildMenuTree($menus, $menu->id);
-                return $menu;
-            });
-    }
-
-    /**
-     * Get all menus as recursive tree
-     */
     public function getMenu()
     {
-        $menus = Menu::orderBy('order', 'ASC')->get();
+        try {
+            // Get all menus ordered by order
+            $menus = Menu::orderBy('order', 'asc')->get()
+                ->map(function ($menu) {
+                    // Get all permissions that contain menu name
+                    $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
+                        ->get()
+                        ->map(function ($permission) {
+                            // Extract action name (Create, Read, etc)
+                            return [
+                                'id' => $permission->id,
+                                'name' => $permission->name,
+                            ];
+                        });
 
-        $tree = $this->buildMenuTree($menus);
+                    return [
+                        'id' => $menu->id,
+                        'name' => $menu->name,
+                        'slug' => $menu->slug,
+                        'parent' => $menu->parent,
+                        'icon' => $menu->icon,
+                        'url' => $menu->url,
+                        'order' => $menu->order,
+                        'is_active' => $menu->is_active,
+                        'permissions' => $permissions,
+                        'created_at' => $menu->created_at,
+                        'updated_at' => $menu->updated_at,
+                    ];
+                });
 
-        return response()->json([
-            'message' => 'Fetch menu successfully',
-            'data' => $tree,
-        ]);
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $menus
+            ], 200);
+        } catch (\Exception $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
-    /**
-     * Get menus by projectId with recursive tree
-     */
-    public function getMenuByProjectId($projectId)
+    public function getMenuByProjectId($project_id)
     {
-        $menus = Menu::where('project_id', $projectId)
-            ->orderBy('order', 'ASC')
-            ->get();
+        try {
+            $menus = Menu::orderBy('order', 'asc')->where('project_id', $project_id)
+                ->get()
+                ->map(function ($menu) {
+                    // Get all permissions that contain menu name
+                    $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
+                        ->get()
+                        ->map(function ($permission) {
+                            return [
+                                'id' => $permission->id,
+                                'name' => $permission->name,
+                            ];
+                        });
 
-        $tree = $this->buildMenuTree($menus);
+                    return [
+                        'id' => $menu->id,
+                        'name' => $menu->name,
+                        'slug' => $menu->slug,
+                        'parent' => $menu->parent,
+                        'icon' => $menu->icon,
+                        'url' => $menu->url,
+                        'order' => $menu->order,
+                        'is_active' => $menu->is_active,
+                        'permissions' => $permissions,
+                        'created_at' => $menu->created_at,
+                        'updated_at' => $menu->updated_at,
+                    ];
+                });
 
-        return response()->json([
-            'message' => 'Fetch menu successfully',
-            'data' => $tree,
-        ]);
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $menus
+            ], 200);
+        } catch (\Exception $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
-    // public function getMenu()
-    // {
-    //     try {
-    //         // Get all menus ordered by order
-    //         $menus = Menu::orderBy('order', 'asc')->get()
-    //             ->map(function ($menu) {
-    //                 // Get all permissions that contain menu name
-    //                 $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
-    //                     ->get()
-    //                     ->map(function ($permission) {
-    //                         // Extract action name (Create, Read, etc)
-    //                         return [
-    //                             'id' => $permission->id,
-    //                             'name' => $permission->name,
-    //                         ];
-    //                     });
-
-    //                 return [
-    //                     'id' => $menu->id,
-    //                     'name' => $menu->name,
-    //                     'slug' => $menu->slug,
-    //                     'parent' => $menu->parent,
-    //                     'icon' => $menu->icon,
-    //                     'url' => $menu->url,
-    //                     'order' => $menu->order,
-    //                     'is_active' => $menu->is_active,
-    //                     'permissions' => $permissions,
-    //                     'created_at' => $menu->created_at,
-    //                     'updated_at' => $menu->updated_at,
-    //                 ];
-    //             });
-
-    //         return response()->json([
-    //             'message' => 'Fetch Data Successfully',
-    //             'data' => $menus
-    //         ], 200);
-    //     } catch (\Exception $th) {
-    //         return response()->json([
-    //             'message' => $th->getMessage()
-    //         ], 500);
-    //     }
-    // }
-
-    // public function getMenuByProjectId($project_id)
-    // {
-    //     try {
-    //         $menus = Menu::orderBy('order', 'asc')->where('project_id', $project_id)
-    //             ->get()
-    //             ->map(function ($menu) {
-    //                 // Get all permissions that contain menu name
-    //                 $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
-    //                     ->get()
-    //                     ->map(function ($permission) {
-    //                         return [
-    //                             'id' => $permission->id,
-    //                             'name' => $permission->name,
-    //                         ];
-    //                     });
-
-    //                 return [
-    //                     'id' => $menu->id,
-    //                     'name' => $menu->name,
-    //                     'slug' => $menu->slug,
-    //                     'parent' => $menu->parent,
-    //                     'icon' => $menu->icon,
-    //                     'url' => $menu->url,
-    //                     'order' => $menu->order,
-    //                     'is_active' => $menu->is_active,
-    //                     'permissions' => $permissions,
-    //                     'created_at' => $menu->created_at,
-    //                     'updated_at' => $menu->updated_at,
-    //                 ];
-    //             });
-
-    //         return response()->json([
-    //             'message' => 'Fetch Data Successfully',
-    //             'data' => $menus
-    //         ], 200);
-    //     } catch (\Exception $th) {
-    //         return response()->json([
-    //             'message' => $th->getMessage()
-    //         ], 500);
-    //     }
-    // }
 
     public function getMenuById($id)
     {
