@@ -402,4 +402,89 @@ class MenuController extends Controller
     //         return response()->json(['message' => $th->getMessage()], 500);
     //     }
     // }
+
+    // public function getMenu()
+    // {
+    //     try {
+    //         // Get all menus ordered by order
+    //         $menus = Menu::orderBy('order', 'asc')->get()
+    //             ->map(function ($menu) {
+    //                 // Get all permissions that contain menu name
+    //                 $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
+    //                     ->get()
+    //                     ->map(function ($permission) {
+    //                         // Extract action name (Create, Read, etc)
+    //                         return [
+    //                             'id' => $permission->id,
+    //                             'name' => $permission->name,
+    //                         ];
+    //                     });
+
+    //                 return [
+    //                     'id' => $menu->id,
+    //                     'name' => $menu->name,
+    //                     'slug' => $menu->slug,
+    //                     'parent' => $menu->parent,
+    //                     'icon' => $menu->icon,
+    //                     'url' => $menu->url,
+    //                     'order' => $menu->order,
+    //                     'is_active' => $menu->is_active,
+    //                     'permissions' => $permissions,
+    //                     'created_at' => $menu->created_at,
+    //                     'updated_at' => $menu->updated_at,
+    //                 ];
+    //             });
+
+    //         return response()->json([
+    //             'message' => 'Fetch Data Successfully',
+    //             'data' => $menus
+    //         ], 200);
+    //     } catch (\Exception $th) {
+    //         return response()->json([
+    //             'message' => $th->getMessage()
+    //         ], 500);
+    //     }
+    // }
+
+    // public function getMenuByProjectId($project_id)
+    // {
+    //     try {
+    //         $menus = Menu::orderBy('order', 'asc')->where('project_id', $project_id)
+    //             ->get()
+    //             ->map(function ($menu) {
+    //                 // Get all permissions that contain menu name
+    //                 $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
+    //                     ->get()
+    //                     ->map(function ($permission) {
+    //                         return [
+    //                             'id' => $permission->id,
+    //                             'name' => $permission->name,
+    //                         ];
+    //                     });
+
+    //                 return [
+    //                     'id' => $menu->id,
+    //                     'name' => $menu->name,
+    //                     'slug' => $menu->slug,
+    //                     'parent' => $menu->parent,
+    //                     'icon' => $menu->icon,
+    //                     'url' => $menu->url,
+    //                     'order' => $menu->order,
+    //                     'is_active' => $menu->is_active,
+    //                     'permissions' => $permissions,
+    //                     'created_at' => $menu->created_at,
+    //                     'updated_at' => $menu->updated_at,
+    //                 ];
+    //             });
+
+    //         return response()->json([
+    //             'message' => 'Fetch Data Successfully',
+    //             'data' => $menus
+    //         ], 200);
+    //     } catch (\Exception $th) {
+    //         return response()->json([
+    //             'message' => $th->getMessage()
+    //         ], 500);
+    //     }
+    // }
 }
