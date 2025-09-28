@@ -12,8 +12,15 @@ class Permission extends Model
 
     public function menus()
     {
-        return $this->belongsToMany(Menu::class, 'menu_package_permission')
+        return $this->belongsToMany(Menu::class, 'menu_packages')
             ->withPivot('package_id')
+            ->withTimestamps();
+    }
+
+    public function packages()
+    {
+        return $this->belongsToMany(Package::class, 'menu_packages')
+            ->withPivot('menu_id')
             ->withTimestamps();
     }
 }

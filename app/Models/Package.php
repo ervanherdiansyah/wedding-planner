@@ -11,8 +11,15 @@ class Package extends Model
     protected $guarded = ['id'];
     public function menus()
     {
-        return $this->belongsToMany(Menu::class, 'menu_package_permission')
+        return $this->belongsToMany(Menu::class, 'menu_packages')
             ->withPivot('permission_id')
+            ->withTimestamps();
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'menu_packages')
+            ->withPivot('menu_id')
             ->withTimestamps();
     }
     protected $casts = [

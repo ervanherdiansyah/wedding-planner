@@ -14,26 +14,133 @@ class PackageController extends Controller
     public function getPackage()
     {
         try {
-            $Package = Package::with('detailPackage')->get();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Package], 200);
+            $Package = Package::with(['detailPackage', 'menus.permissions' => function ($query) {
+                $query->select('permissions.id', 'permissions.name');
+            }])
+                ->get()
+                ->map(function ($package) {
+                    return [
+                        'id' => $package->id,
+                        'name' => $package->name,
+                        'description' => $package->description,
+                        'price' => $package->price,
+                        'detail_package' => $package->detailPackage,
+                        'menus' => $package->menus->map(function ($menu) {
+                            return [
+                                'id' => $menu->id,
+                                'name' => $menu->name,
+                                'slug' => $menu->slug,
+                                'parent' => $menu->parent,
+                                'icon' => $menu->icon,
+                                'url' => $menu->url,
+                                'order' => $menu->order,
+                                'is_active' => $menu->is_active,
+                                'permissions' => $menu->permissions->map(function ($permission) {
+                                    return [
+                                        'id' => $permission->id,
+                                        'name' => $permission->name,
+                                        'action' => explode(' ', $permission->name)[0]
+                                    ];
+                                })
+                            ];
+                        })
+                    ];
+                });
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $Package
+            ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function getPackageByProjectId($project_id)
     {
         try {
-            $Package = Package::with('detailPackage')->where('project_id', $project_id)->get();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Package], 200);
+            $Package = Package::with(['detailPackage', 'menus.permissions' => function ($query) {
+                $query->select('permissions.id', 'permissions.name');
+            }])
+                ->where('project_id', $project_id)
+                ->get()
+                ->map(function ($package) {
+                    return [
+                        'id' => $package->id,
+                        'name' => $package->name,
+                        'description' => $package->description,
+                        'price' => $package->price,
+                        'detail_package' => $package->detailPackage,
+                        'menus' => $package->menus->map(function ($menu) {
+                            return [
+                                'id' => $menu->id,
+                                'name' => $menu->name,
+                                'slug' => $menu->slug,
+                                'parent' => $menu->parent,
+                                'icon' => $menu->icon,
+                                'url' => $menu->url,
+                                'order' => $menu->order,
+                                'is_active' => $menu->is_active,
+                                'permissions' => $menu->permissions->map(function ($permission) {
+                                    return [
+                                        'id' => $permission->id,
+                                        'name' => $permission->name,
+                                        'action' => explode(' ', $permission->name)[0]
+                                    ];
+                                })
+                            ];
+                        })
+                    ];
+                });
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $Package
+            ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
     public function getPackageById($id)
     {
         try {
-            $Package = Package::with('detailPackage')->where('id', $id)->first();
-            return response()->json(['message' => 'Fetch Data Successfully', 'data' => $Package], 200);
+            $package = Package::with(['detailPackage', 'menus.permissions' => function ($query) {
+                $query->select('permissions.id', 'permissions.name');
+            }])
+                ->findOrFail($id);
+
+            $data = [
+                'id' => $package->id,
+                'name' => $package->name,
+                'description' => $package->description,
+                'price' => $package->price,
+                'detail_package' => $package->detailPackage,
+                'menus' => $package->menus->map(function ($menu) {
+                    return [
+                        'id' => $menu->id,
+                        'name' => $menu->name,
+                        'slug' => $menu->slug,
+                        'parent' => $menu->parent,
+                        'icon' => $menu->icon,
+                        'url' => $menu->url,
+                        'order' => $menu->order,
+                        'is_active' => $menu->is_active,
+                        'permissions' => $menu->permissions->map(function ($permission) {
+                            return [
+                                'id' => $permission->id,
+                                'name' => $permission->name,
+                                'action' => explode(' ', $permission->name)[0]
+                            ];
+                        })
+                    ];
+                })
+            ];
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $data
+            ], 200);
         } catch (\Exception $th) {
             return response()->json(['message' => $th->getMessage()], 500);
         }

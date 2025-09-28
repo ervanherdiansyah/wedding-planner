@@ -18,7 +18,7 @@ class MenuSeeder extends Seeder
         'parent' => null,
         'order' => 0,
         'url' => '/dashboards',
-        'permissions' => []
+        'permissions' => ['Read']
       ],
       [
         'name' => 'Overviews',
@@ -38,7 +38,7 @@ class MenuSeeder extends Seeder
         'parent' => null,
         'order' => 1,
         'url' => '/informasi-pernikahan',
-        'permissions' => []
+        'permissions' => ['Read']
       ],
       [
         'name' => 'Informasi Pengantin',
@@ -108,7 +108,7 @@ class MenuSeeder extends Seeder
         'parent' => null,
         'order' => 2,
         'url' => '/perencanaan',
-        'permissions' => []
+        'permissions' => ['Read']
       ],
       [
         'name' => 'Budget',
@@ -179,7 +179,7 @@ class MenuSeeder extends Seeder
         'parent' => null,
         'order' => 3,
         'url' => '/master-data',
-        'permissions' => []
+        'permissions' => ['Read']
       ],
       [
         'name' => 'User',
@@ -200,7 +200,7 @@ class MenuSeeder extends Seeder
         'parent' => null,
         'order' => 4,
         'url' => '/transaction',
-        'permissions' => []
+        'permissions' => ['Read']
       ],
       [
         'name' => 'Order',
@@ -231,7 +231,7 @@ class MenuSeeder extends Seeder
         'parent' => null,
         'order' => 5,
         'url' => '/settings',
-        'permissions' => []
+        'permissions' => ['Read']
       ],
       [
         'name' => 'Menu',

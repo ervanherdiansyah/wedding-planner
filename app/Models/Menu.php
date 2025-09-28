@@ -17,4 +17,11 @@ class Menu extends Model
             ->withPivot('permission_id')
             ->withTimestamps();
     }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'menu_packages')
+            ->withPivot('package_id')
+            ->withTimestamps();
+    }
 }
