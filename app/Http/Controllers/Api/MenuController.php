@@ -15,7 +15,7 @@ class MenuController extends Controller
     {
         try {
             // Get all menus ordered by order
-            $menus = Menu::get()
+            $menus = Menu::orderBy('order', 'asc')->get()
                 ->map(function ($menu) {
                     // Get all permissions that contain menu name
                     $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
@@ -57,7 +57,7 @@ class MenuController extends Controller
     public function getMenuByProjectId($project_id)
     {
         try {
-            $menus = Menu::where('project_id', $project_id)
+            $menus = Menu::orderBy('order', 'asc')->where('project_id', $project_id)
                 ->get()
                 ->map(function ($menu) {
                     // Get all permissions that contain menu name
