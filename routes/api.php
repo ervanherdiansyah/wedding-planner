@@ -60,6 +60,7 @@ Route::group([
         // Menu
         Route::get('/menu', [MenuController::class, 'getMenu']);
         Route::get('/menu-access', [MenuController::class, 'getMenuAccess']);
+        Route::get('/menu-parent', [MenuController::class, 'getParentMenus']);
         Route::post('/menu/create', [MenuController::class, 'createMenu']);
         Route::get('/menu-project-id/{project_id}', [MenuController::class, 'getMenuByProjectId']);
         Route::get('/menu/{id}', [MenuController::class, 'getMenuById']);

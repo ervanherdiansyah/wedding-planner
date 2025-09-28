@@ -15,37 +15,14 @@ class MenuController extends Controller
     {
         try {
             // Get all menus ordered by order
-            $menus = Menu::orderBy('order', 'asc')->get()
-                ->map(function ($menu) {
-                    // Get all permissions that contain menu name
-                    $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
-                        ->get()
-                        ->map(function ($permission) {
-                            // Extract action name (Create, Read, etc)
-                            return [
-                                'id' => $permission->id,
-                                'name' => $permission->name,
-                            ];
-                        });
+            $menus = Menu::orderBy('order', 'asc')->get();
 
-                    return [
-                        'id' => $menu->id,
-                        'name' => $menu->name,
-                        'slug' => $menu->slug,
-                        'parent' => $menu->parent,
-                        'icon' => $menu->icon,
-                        'url' => $menu->url,
-                        'order' => $menu->order,
-                        'is_active' => $menu->is_active,
-                        'permissions' => $permissions,
-                        'created_at' => $menu->created_at,
-                        'updated_at' => $menu->updated_at,
-                    ];
-                });
+            // Build hierarchical menu structure
+            $menuTree = $this->buildMenuTree($menus);
 
             return response()->json([
                 'message' => 'Fetch Data Successfully',
-                'data' => $menus
+                'data' => $menuTree
             ], 200);
         } catch (\Exception $th) {
             return response()->json([
@@ -57,43 +34,70 @@ class MenuController extends Controller
     public function getMenuByProjectId($project_id)
     {
         try {
-            $menus = Menu::orderBy('order', 'asc')->where('project_id', $project_id)
-                ->get()
-                ->map(function ($menu) {
-                    // Get all permissions that contain menu name
-                    $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
-                        ->get()
-                        ->map(function ($permission) {
-                            return [
-                                'id' => $permission->id,
-                                'name' => $permission->name,
-                            ];
-                        });
+            $menus = Menu::orderBy('order', 'asc')
+                ->where('project_id', $project_id)
+                ->get();
 
-                    return [
-                        'id' => $menu->id,
-                        'name' => $menu->name,
-                        'slug' => $menu->slug,
-                        'parent' => $menu->parent,
-                        'icon' => $menu->icon,
-                        'url' => $menu->url,
-                        'order' => $menu->order,
-                        'is_active' => $menu->is_active,
-                        'permissions' => $permissions,
-                        'created_at' => $menu->created_at,
-                        'updated_at' => $menu->updated_at,
-                    ];
-                });
+            // Build hierarchical menu structure
+            $menuTree = $this->buildMenuTree($menus);
 
             return response()->json([
                 'message' => 'Fetch Data Successfully',
-                'data' => $menus
+                'data' => $menuTree
             ], 200);
         } catch (\Exception $th) {
             return response()->json([
                 'message' => $th->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Build hierarchical menu tree structure
+     */
+    private function buildMenuTree($menus, $parentId = null)
+    {
+        $tree = [];
+
+        foreach ($menus as $menu) {
+            // Check if this menu belongs to the current parent level
+            if ($menu->parent == $parentId) {
+                // Get permissions for this menu
+                $permissions = Permission::where('name', 'LIKE', "% {$menu->name}")
+                    ->get()
+                    ->map(function ($permission) {
+                        return [
+                            'id' => $permission->id,
+                            'name' => $permission->name,
+                        ];
+                    });
+
+                // Build menu item
+                $menuItem = [
+                    'id' => $menu->id,
+                    'name' => $menu->name,
+                    'slug' => $menu->slug,
+                    'parent' => $menu->parent,
+                    'icon' => $menu->icon,
+                    'url' => $menu->url,
+                    'order' => $menu->order,
+                    'is_active' => $menu->is_active,
+                    'permissions' => $permissions,
+                    'created_at' => $menu->created_at,
+                    'updated_at' => $menu->updated_at,
+                ];
+
+                // Recursively get children
+                $children = $this->buildMenuTree($menus, $menu->id);
+                if (!empty($children)) {
+                    $menuItem['children'] = $children;
+                }
+
+                $tree[] = $menuItem;
+            }
+        }
+
+        return $tree;
     }
 
     public function getMenuById($id)
