@@ -19,6 +19,9 @@ class PackageController extends Controller
             }])
                 ->get()
                 ->map(function ($package) {
+                    // Susun menu bertingkat
+                    $menus = $this->buildMenuHierarchy($package->menus->unique('id'));
+
                     return [
                         'id' => $package->id,
                         'name' => $package->name,
@@ -26,34 +29,7 @@ class PackageController extends Controller
                         'price' => $package->price,
                         'invited' => $package->invited,
                         'detail_package' => $package->detailPackage,
-                        'menus' => $package->menus->map(function ($menu) use ($package) {
-                            // Get permissions from pivot table for this specific package and menu
-                            $permissions = DB::table('menu_packages')
-                                ->join('permissions', 'menu_packages.permission_id', '=', 'permissions.id')
-                                ->where('menu_packages.package_id', $package->id)
-                                ->where('menu_packages.menu_id', $menu->id)
-                                ->select('permissions.id', 'permissions.name')
-                                ->get()
-                                ->map(function ($permission) {
-                                    return [
-                                        'id' => $permission->id,
-                                        'name' => $permission->name,
-                                        'action' => explode(' ', $permission->name)[0]
-                                    ];
-                                });
-
-                            return [
-                                'id' => $menu->id,
-                                'name' => $menu->name,
-                                'slug' => $menu->slug,
-                                'parent' => $menu->parent,
-                                'icon' => $menu->icon,
-                                'url' => $menu->url,
-                                'order' => $menu->order,
-                                'is_active' => $menu->is_active,
-                                'permissions' => $permissions
-                            ];
-                        })
+                        'menus' => $menus
                     ];
                 });
 
@@ -75,31 +51,17 @@ class PackageController extends Controller
                 ->where('project_id', $project_id)
                 ->get()
                 ->map(function ($package) {
+                    // Susun menu bertingkat
+                    $menus = $this->buildMenuHierarchy($package->menus->unique('id'));
+
                     return [
                         'id' => $package->id,
                         'name' => $package->name,
                         'description' => $package->description,
+                        'invited' => $package->invited,
                         'price' => $package->price,
                         'detail_package' => $package->detailPackage,
-                        'menus' => $package->menus->map(function ($menu) {
-                            return [
-                                'id' => $menu->id,
-                                'name' => $menu->name,
-                                'slug' => $menu->slug,
-                                'parent' => $menu->parent,
-                                'icon' => $menu->icon,
-                                'url' => $menu->url,
-                                'order' => $menu->order,
-                                'is_active' => $menu->is_active,
-                                'permissions' => $menu->permissions->map(function ($permission) {
-                                    return [
-                                        'id' => $permission->id,
-                                        'name' => $permission->name,
-                                        'action' => explode(' ', $permission->name)[0]
-                                    ];
-                                })
-                            ];
-                        })
+                        'menus' => $menus
                     ];
                 });
 
@@ -111,6 +73,39 @@ class PackageController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+    /**
+     * Rekursif untuk build parent-child menu
+     */
+    private function buildMenuHierarchy($menus, $parentId = null)
+    {
+        return $menus
+            ->where('parent', $parentId) // hanya ambil child sesuai parent
+            ->sortBy('order')
+            ->map(function ($menu) use ($menus) {
+                return [
+                    'id' => $menu->id,
+                    'name' => $menu->name,
+                    'slug' => $menu->slug,
+                    'parent' => $menu->parent,
+                    'icon' => $menu->icon,
+                    'url' => $menu->url,
+                    'order' => $menu->order,
+                    'is_active' => $menu->is_active,
+                    'permissions' => $menu->permissions->map(function ($permission) {
+                        return [
+                            'id' => $permission->id,
+                            'name' => $permission->name,
+                            'action' => explode(' ', $permission->name)[0]
+                        ];
+                    }),
+                    // Rekursif tetap berdasarkan menus hasil relasi package
+                    'children' => $this->buildMenuHierarchy($menus, $menu->id)
+                ];
+            })
+            ->values();
+    }
+
 
     public function getPackageById($id)
     {
