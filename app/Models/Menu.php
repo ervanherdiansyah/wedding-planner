@@ -22,6 +22,7 @@ class Menu extends Model
     {
         return $this->belongsToMany(Permission::class, 'menu_packages')
             ->withPivot('package_id')
+            ->distinct() // Add distinct to prevent duplicates
             ->withTimestamps();
     }
 }

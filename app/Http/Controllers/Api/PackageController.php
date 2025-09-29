@@ -83,6 +83,17 @@ class PackageController extends Controller
             ->where('parent', $parentId) // hanya ambil child sesuai parent
             ->sortBy('order')
             ->map(function ($menu) use ($menus) {
+                // Get unique permissions based on id
+                $uniquePermissions = $menu->permissions
+                    ->unique('id')
+                    ->map(function ($permission) {
+                        return [
+                            'id' => $permission->id,
+                            'name' => $permission->name,
+                            'action' => explode(' ', $permission->name)[0]
+                        ];
+                    });
+
                 return [
                     'id' => $menu->id,
                     'name' => $menu->name,
@@ -92,14 +103,7 @@ class PackageController extends Controller
                     'url' => $menu->url,
                     'order' => $menu->order,
                     'is_active' => $menu->is_active,
-                    'permissions' => $menu->permissions->map(function ($permission) {
-                        return [
-                            'id' => $permission->id,
-                            'name' => $permission->name,
-                            'action' => explode(' ', $permission->name)[0]
-                        ];
-                    }),
-                    // Rekursif tetap berdasarkan menus hasil relasi package
+                    'permissions' => $uniquePermissions->values(),
                     'children' => $this->buildMenuHierarchy($menus, $menu->id)
                 ];
             })
