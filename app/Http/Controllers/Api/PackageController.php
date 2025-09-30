@@ -29,7 +29,7 @@ class PackageController extends Controller
                         'price' => $package->price,
                         'invited' => $package->invited,
                         'status' => $package->status,
-                        'detail_package' => $package->detailPackage,
+                        'detail_package' => $package->detailPackages,
                         'menus' => $menus
                     ];
                 });
@@ -62,7 +62,7 @@ class PackageController extends Controller
                         'invited' => $package->invited,
                         'price' => $package->price,
                         'status' => $package->status,
-                        'detail_package' => $package->detailPackage,
+                        'detail_package' => $package->detailPackages,
                         'menus' => $menus
                     ];
                 });
