@@ -85,9 +85,13 @@ class PackageController extends Controller
             ->where('parent', $parentId) // hanya ambil child sesuai parent
             ->sortBy('order')
             ->map(function ($menu) use ($menus) {
-                // Get unique permissions based on id
+                // Get unique permissions specific to this menu only
                 $uniquePermissions = $menu->permissions
                     ->unique('id')
+                    ->filter(function ($permission) use ($menu) {
+                        // Only keep permissions that belong to this menu based on name
+                        return str_contains(strtolower($permission->name), strtolower($menu->name));
+                    })
                     ->map(function ($permission) {
                         return [
                             'id' => $permission->id,
