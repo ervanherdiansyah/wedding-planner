@@ -88,10 +88,6 @@ class PackageController extends Controller
                 // Get unique permissions specific to this menu only
                 $uniquePermissions = $menu->permissions
                     ->unique('id')
-                    ->filter(function ($permission) use ($menu) {
-                        // Only keep permissions that belong to this menu based on name
-                        return str_contains(strtolower($permission->name), strtolower($menu->name));
-                    })
                     ->map(function ($permission) {
                         return [
                             'id' => $permission->id,
@@ -99,6 +95,7 @@ class PackageController extends Controller
                             'action' => explode(' ', $permission->name)[0]
                         ];
                     });
+
 
                 return [
                     'id' => $menu->id,
