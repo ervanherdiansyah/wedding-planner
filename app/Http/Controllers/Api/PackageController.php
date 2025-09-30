@@ -189,7 +189,6 @@ class PackageController extends Controller
                 'price' => $request->price,
                 'invited' => $request->invited,
                 'status' => $request->status,
-
             ]);
 
             // Simpan detail fitur package
@@ -368,7 +367,7 @@ class PackageController extends Controller
     {
         try {
             //code...
-            $data = Package::where('status', 1)->get();
+            $data = Package::with('detailPackages')->where('status', 1)->get();
 
             return response()->json([
                 'message' => 'Fetch Data Successfully',
