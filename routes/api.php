@@ -87,7 +87,10 @@ Route::group([
         Route::get('/package/{id}', [PackageController::class, 'getPackageById']);
         Route::put('/package/update/{id}', [PackageController::class, 'updatePackage']);
         Route::delete('/package/delete/{id}', [PackageController::class, 'deletePackage']);
+
+        Route::put('/package-update-status', [PackageController::class, 'toggleActivePackage']);
         // Invite User
+
         Route::post('/invited-user', [MembershipController::class, 'inviteUser']);
         // Overview
         Route::get('/overview/{project_id}', [OverviewController::class, 'getOverview']);
@@ -283,10 +286,8 @@ Route::group([
 });
 Route::get('/payment-gateway/{user_id}', [PaymentGatewayController::class, 'payment']);
 Route::post('/payment-callback', [PaymentGatewayController::class, 'callback']);
-Route::get('/packages', [PackageController::class, 'getPackage']);
+Route::get('/packages', [PackageController::class, 'getPackageActive']);
 Route::get('/status-payments/{user_id}', [PaymentController::class, 'getStatusPaymentByUserId']);
-
-
 
 Route::fallback(function () {
     return response()->json([

@@ -360,4 +360,38 @@ class PackageController extends Controller
             return response()->json(['message' => $th->getMessage()], 500);
         }
     }
+
+    public function getPackageActive()
+    {
+        try {
+            //code...
+            $data = Package::where('status', 1)->get();
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data' => $data
+            ], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
+
+    public function toggleActivePackage($id)
+    {
+        try {
+            //code...
+            $package = Package::findOrFail($id);
+            $package->status = !$package->status;
+            $package->save();
+
+            return response()->json([
+                'message' => 'Toggle Active Successfully',
+                'data' => $package
+            ], 200);
+        } catch (\Throwable $th) {
+            //throw $th;
+            return response()->json(['message' => $th->getMessage()], 500);
+        }
+    }
 }
