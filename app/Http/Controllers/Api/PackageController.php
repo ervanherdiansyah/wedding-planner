@@ -209,6 +209,7 @@ class PackageController extends Controller
                 'description' => 'nullable|string',
                 'price' => 'required|numeric',
                 'invited' => 'required|numeric',
+                'status' => 'nullable|boolean',
                 'detailPackage' => 'nullable|array',
                 'detailPackage.*.id' => 'nullable|integer|exists:detail_packages,id',
                 'detailPackage.*.name_feature' => 'required|string',
@@ -221,7 +222,7 @@ class PackageController extends Controller
             $Package = Package::findOrFail($id);
 
             DB::transaction(function () use ($request, $Package) {
-                // Update package utama
+                // Update data utama package
                 $Package->update([
                     'name' => $request->name,
                     'description' => $request->description,
@@ -237,6 +238,7 @@ class PackageController extends Controller
                  */
                 $detailIds = collect($request->detailPackage)->pluck('id')->filter()->toArray();
 
+                // Hapus detail yang tidak ada di request
                 DetailPackages::where('package_id', $Package->id)
                     ->whereNotIn('id', $detailIds)
                     ->delete();
@@ -244,11 +246,14 @@ class PackageController extends Controller
                 if (!empty($request->detailPackage)) {
                     foreach ($request->detailPackage as $feature) {
                         if (!empty($feature['id'])) {
+                            // Update jika ada id
                             DetailPackages::where('id', $feature['id'])
+                                ->where('package_id', $Package->id)
                                 ->update([
                                     'name_feature' => $feature['name_feature'],
                                 ]);
                         } else {
+                            // Create baru jika tidak ada id
                             DetailPackages::create([
                                 'package_id' => $Package->id,
                                 'name_feature' => $feature['name_feature'],
@@ -262,17 +267,31 @@ class PackageController extends Controller
                  *  SYNC MENU PACKAGES
                  * =========================
                  */
-                // First, delete all existing menu permissions for this package
-                MenuPackage::where('package_id', $Package->id)->delete();
+                $accessIds = collect($request->access)->pluck('id')->filter()->toArray();
 
-                // Then create new ones based on the request
+                // Hapus access yang tidak ada di request
+                MenuPackage::where('package_id', $Package->id)
+                    ->whereNotIn('id', $accessIds)
+                    ->delete();
+
                 if (!empty($request->access)) {
                     foreach ($request->access as $access) {
-                        MenuPackage::create([
-                            'package_id' => $Package->id,
-                            'menu_id' => $access['menu_id'],
-                            'permission_id' => $access['permission_id'],
-                        ]);
+                        if (!empty($access['id'])) {
+                            // Update record lama
+                            MenuPackage::where('id', $access['id'])
+                                ->where('package_id', $Package->id)
+                                ->update([
+                                    'menu_id' => $access['menu_id'],
+                                    'permission_id' => $access['permission_id'],
+                                ]);
+                        } else {
+                            // Insert baru
+                            MenuPackage::create([
+                                'package_id' => $Package->id,
+                                'menu_id' => $access['menu_id'],
+                                'permission_id' => $access['permission_id'],
+                            ]);
+                        }
                     }
                 }
             });
@@ -288,6 +307,7 @@ class PackageController extends Controller
             ], 500);
         }
     }
+
 
 
 
