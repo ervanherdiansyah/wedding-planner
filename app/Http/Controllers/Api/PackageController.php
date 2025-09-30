@@ -305,15 +305,15 @@ class PackageController extends Controller
             });
 
             // Refresh package dengan relasi + nested relasi menu & permission
-            $Package->load([
-                'detailPackages:id,package_id,name_feature',
-                'menuPackages' => function ($q) {
-                    $q->with([
-                        'menu:id,name,slug,icon,url,parent,order',
-                        'permission:id,name'
-                    ]);
-                }
-            ]);
+            // $Package->load([
+            //     'detailPackages:id,package_id,name_feature',
+            //     'menuPackages' => function ($q) {
+            //         $q->with([
+            //             'menu:id,name,slug,icon,url,parent,order',
+            //             'permission:id,name'
+            //         ]);
+            //     }
+            // ]);
 
             return response()->json([
                 'message' => 'Updated data successfully',
