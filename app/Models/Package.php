@@ -24,6 +24,8 @@ class Package extends Model
     }
     protected $casts = [
         'price' => 'integer',
+        'status' => 'boolean',
+        'invited' => 'integer',
     ];
     public function user()
     {
