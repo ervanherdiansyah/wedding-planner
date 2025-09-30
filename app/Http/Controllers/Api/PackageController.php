@@ -126,41 +126,17 @@ class PackageController extends Controller
                 ->where('id', $id)
                 ->get()
                 ->map(function ($package) {
+                    // Reuse the buildMenuHierarchy method
+                    $menus = $this->buildMenuHierarchy($package->menus->unique('id'));
+
                     return [
                         'id' => $package->id,
                         'name' => $package->name,
                         'description' => $package->description,
                         'price' => $package->price,
                         'invited' => $package->invited,
-                        'detail_package' => $package->detailPackage,
-                        'menus' => $package->menus->map(function ($menu) use ($package) {
-                            // Get permissions from pivot table for this specific package and menu
-                            $permissions = DB::table('menu_packages')
-                                ->join('permissions', 'menu_packages.permission_id', '=', 'permissions.id')
-                                ->where('menu_packages.package_id', $package->id)
-                                ->where('menu_packages.menu_id', $menu->id)
-                                ->select('permissions.id', 'permissions.name')
-                                ->get()
-                                ->map(function ($permission) {
-                                    return [
-                                        'id' => $permission->id,
-                                        'name' => $permission->name,
-                                        'action' => explode(' ', $permission->name)[0]
-                                    ];
-                                });
-
-                            return [
-                                'id' => $menu->id,
-                                'name' => $menu->name,
-                                'slug' => $menu->slug,
-                                'parent' => $menu->parent,
-                                'icon' => $menu->icon,
-                                'url' => $menu->url,
-                                'order' => $menu->order,
-                                'is_active' => $menu->is_active,
-                                'permissions' => $permissions
-                            ];
-                        })
+                        'detail_package' => $package->detailPackages,
+                        'menus' => $menus
                     ];
                 });
 
@@ -185,7 +161,7 @@ class PackageController extends Controller
                 'detailPackage.*.name_feature' => 'required|string',
                 'access' => 'array',
                 'access.*.menu_id' => 'required|integer|exists:menus,id',
-                'access.*.permission_id' => 'nullable|integer|exists:permissions,id',
+                'access.*.permission_id' => 'required|integer|exists:permissions,id',
             ]);
 
             // Simpan package
@@ -252,7 +228,6 @@ class PackageController extends Controller
                     'price' => $request->price,
                     'invited' => $request->invited,
                     'status' => $request->status,
-
                 ]);
 
                 /**
@@ -287,41 +262,20 @@ class PackageController extends Controller
                  *  SYNC MENU PACKAGES
                  * =========================
                  */
-                $accessIds = collect($request->access)->pluck('id')->filter()->toArray();
+                // First, delete all existing menu permissions for this package
+                MenuPackage::where('package_id', $Package->id)->delete();
 
-                MenuPackage::where('package_id', $Package->id)
-                    ->whereNotIn('id', $accessIds)
-                    ->delete();
-
+                // Then create new ones based on the request
                 if (!empty($request->access)) {
                     foreach ($request->access as $access) {
-                        if (!empty($access['id'])) {
-                            MenuPackage::where('id', $access['id'])
-                                ->update([
-                                    'menu_id' => $access['menu_id'],
-                                    'permission_id' => $access['permission_id'],
-                                ]);
-                        } else {
-                            MenuPackage::create([
-                                'package_id' => $Package->id,
-                                'menu_id' => $access['menu_id'],
-                                'permission_id' => $access['permission_id'],
-                            ]);
-                        }
+                        MenuPackage::create([
+                            'package_id' => $Package->id,
+                            'menu_id' => $access['menu_id'],
+                            'permission_id' => $access['permission_id'],
+                        ]);
                     }
                 }
             });
-
-            // Refresh package dengan relasi + nested relasi menu & permission
-            // $Package->load([
-            //     'detailPackages:id,package_id,name_feature',
-            //     'menuPackages' => function ($q) {
-            //         $q->with([
-            //             'menu:id,name,slug,icon,url,parent,order',
-            //             'permission:id,name'
-            //         ]);
-            //     }
-            // ]);
 
             return response()->json([
                 'message' => 'Updated data successfully',
