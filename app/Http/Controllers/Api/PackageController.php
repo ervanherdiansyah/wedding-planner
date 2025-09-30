@@ -28,6 +28,7 @@ class PackageController extends Controller
                         'description' => $package->description,
                         'price' => $package->price,
                         'invited' => $package->invited,
+                        'status' => $package->status,
                         'detail_package' => $package->detailPackage,
                         'menus' => $menus
                     ];
@@ -60,6 +61,7 @@ class PackageController extends Controller
                         'description' => $package->description,
                         'invited' => $package->invited,
                         'price' => $package->price,
+                        'status' => $package->status,
                         'detail_package' => $package->detailPackage,
                         'menus' => $menus
                     ];
