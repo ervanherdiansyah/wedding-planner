@@ -88,7 +88,7 @@ Route::group([
         Route::put('/package/update/{id}', [PackageController::class, 'updatePackage']);
         Route::delete('/package/delete/{id}', [PackageController::class, 'deletePackage']);
 
-        Route::put('/package-update-status', [PackageController::class, 'toggleActivePackage']);
+        Route::get('/package-update-status/{id}', [PackageController::class, 'toggleActivePackage']);
         // Invite User
 
         Route::post('/invited-user', [MembershipController::class, 'inviteUser']);
