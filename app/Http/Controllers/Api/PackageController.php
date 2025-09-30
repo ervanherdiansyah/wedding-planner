@@ -14,34 +14,75 @@ class PackageController extends Controller
     public function getPackage()
     {
         try {
-            $Package = Package::with(['detailPackages', 'menus' => function ($query) {
-                // $query->orderBy('order', 'asc');
-            }])
-                ->get()
+            $packages = Package::with([
+                'detailPackages',
+                'menus.permissions' => function ($q) {
+                    // filter by package_id lewat pivot
+                    $q->wherePivot('package_id', DB::raw('packages.id'));
+                }
+            ])->get()
                 ->map(function ($package) {
-                    // Susun menu bertingkat
-                    $menus = $this->buildMenuHierarchy($package->menus->unique('id'));
+                    $menus = $this->buildMenuHierarchy(
+                        $package->menus->unique('id'),
+                        null,
+                        $package->id // kirim package_id
+                    );
 
                     return [
-                        'id' => $package->id,
-                        'name' => $package->name,
-                        'description' => $package->description,
-                        'price' => $package->price,
-                        'invited' => $package->invited,
-                        'status' => $package->status,
+                        'id'             => $package->id,
+                        'name'           => $package->name,
+                        'description'    => $package->description,
+                        'price'          => $package->price,
+                        'invited'        => $package->invited,
+                        'status'         => $package->status,
                         'detail_package' => $package->detailPackages,
-                        'menus' => $menus
+                        'menus'          => $menus
                     ];
                 });
 
             return response()->json([
                 'message' => 'Fetch Data Successfully',
-                'data' => $Package
+                'data'    => $packages
             ], 200);
-        } catch (\Exception $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
     }
+
+    public function getPackageById($id)
+    {
+        try {
+            $package = Package::with([
+                'detailPackages',
+                'menus.permissions' => function ($q) use ($id) {
+                    $q->wherePivot('package_id', $id);
+                }
+            ])->findOrFail($id);
+
+            $menus = $this->buildMenuHierarchy(
+                $package->menus->unique('id'),
+                null,
+                $package->id
+            );
+
+            return response()->json([
+                'message' => 'Fetch Data Successfully',
+                'data'    => [
+                    'id'             => $package->id,
+                    'name'           => $package->name,
+                    'description'    => $package->description,
+                    'price'          => $package->price,
+                    'invited'        => $package->invited,
+                    'status'         => $package->status,
+                    'detail_package' => $package->detailPackages,
+                    'menus'          => $menus
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
+    }
+
 
     public function getPackageByProjectId($project_id)
     {
@@ -79,75 +120,43 @@ class PackageController extends Controller
     /**
      * Rekursif untuk build parent-child menu
      */
-    private function buildMenuHierarchy($menus, $parentId = null)
+    private function buildMenuHierarchy($menus, $parentId = null, $packageId = null)
     {
         return $menus
-            ->where('parent', $parentId) // hanya ambil child sesuai parent
+            ->where('parent', $parentId)
             ->sortBy('order')
-            ->map(function ($menu) use ($menus) {
-                // Get unique permissions specific to this menu only
+            ->map(function ($menu) use ($menus, $packageId) {
+                // filter permission sesuai packageId
                 $uniquePermissions = $menu->permissions
-                    ->unique('id')
-                    ->filter(function ($permission) use ($menu) {
-                        // pastikan permission ini memang untuk menu yang sama persis
-                        $parts = explode(' ', $permission->name, 2); // ex: ["Read", "Dashboards"]
-                        return isset($parts[1]) && strtolower($parts[1]) === strtolower($menu->name);
+                    ->filter(function ($permission) use ($packageId) {
+                        return $permission->pivot->package_id == $packageId;
                     })
+                    ->unique('id')
                     ->map(function ($permission) {
                         return [
-                            'id' => $permission->id,
-                            'name' => $permission->name,
-                            'action' => explode(' ', $permission->name)[0]
+                            'id'     => $permission->id,
+                            'name'   => $permission->name,
+                            'action' => explode(' ', $permission->name)[0],
                         ];
                     });
+
                 return [
-                    'id' => $menu->id,
-                    'name' => $menu->name,
-                    'slug' => $menu->slug,
-                    'parent' => $menu->parent,
-                    'icon' => $menu->icon,
-                    'url' => $menu->url,
-                    'order' => $menu->order,
-                    'is_active' => $menu->is_active,
+                    'id'          => $menu->id,
+                    'name'        => $menu->name,
+                    'slug'        => $menu->slug,
+                    'parent'      => $menu->parent,
+                    'icon'        => $menu->icon,
+                    'url'         => $menu->url,
+                    'order'       => $menu->order,
+                    'is_active'   => $menu->is_active,
                     'permissions' => $uniquePermissions->values(),
-                    'children' => $this->buildMenuHierarchy($menus, $menu->id)
+                    'children'    => $this->buildMenuHierarchy($menus, $menu->id, $packageId)
                 ];
             })
             ->values();
     }
 
 
-    public function getPackageById($id)
-    {
-        try {
-            $Package = Package::with(['detailPackages', 'menus' => function ($query) {
-                // $query->orderBy('order', 'asc');
-            }])
-                ->where('id', $id)
-                ->get()
-                ->map(function ($package) {
-                    // Reuse the buildMenuHierarchy method
-                    $menus = $this->buildMenuHierarchy($package->menus->unique('id'));
-
-                    return [
-                        'id' => $package->id,
-                        'name' => $package->name,
-                        'description' => $package->description,
-                        'price' => $package->price,
-                        'invited' => $package->invited,
-                        'detail_package' => $package->detailPackages,
-                        'menus' => $menus
-                    ];
-                });
-
-            return response()->json([
-                'message' => 'Fetch Data Successfully',
-                'data' => $Package
-            ], 200);
-        } catch (\Exception $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
-    }
     public function createPackage(Request $request)
     {
         try {
