@@ -33,4 +33,8 @@ class Package extends Model
     {
         return $this->hasMany(DetailPackages::class, 'package_id');
     }
+    public function menuPackages()
+    {
+        return $this->hasMany(MenuPackage::class, 'package_id');
+    }
 }
