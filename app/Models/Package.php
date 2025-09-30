@@ -29,7 +29,7 @@ class Package extends Model
     {
         return $this->hasOne(User::class, 'package');
     }
-    public function detailPackage()
+    public function detailPackages()  // Changed from detailPackage to detailPackages
     {
         return $this->hasMany(DetailPackages::class, 'package_id');
     }

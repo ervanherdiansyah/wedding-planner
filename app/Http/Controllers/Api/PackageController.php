@@ -14,7 +14,7 @@ class PackageController extends Controller
     public function getPackage()
     {
         try {
-            $Package = Package::with(['detailPackage', 'menus' => function ($query) {
+            $Package = Package::with(['detailPackages', 'menus' => function ($query) {
                 // $query->orderBy('order', 'asc');
             }])
                 ->get()
@@ -45,7 +45,7 @@ class PackageController extends Controller
     public function getPackageByProjectId($project_id)
     {
         try {
-            $Package = Package::with(['detailPackage', 'menus.permissions' => function ($query) {
+            $Package = Package::with(['detailPackages', 'menus.permissions' => function ($query) {
                 $query->select('permissions.id', 'permissions.name');
             }])
                 ->where('project_id', $project_id)
@@ -114,7 +114,7 @@ class PackageController extends Controller
     public function getPackageById($id)
     {
         try {
-            $Package = Package::with(['detailPackage', 'menus' => function ($query) {
+            $Package = Package::with(['detailPackages', 'menus' => function ($query) {
                 // $query->orderBy('order', 'asc');
             }])
                 ->where('id', $id)
