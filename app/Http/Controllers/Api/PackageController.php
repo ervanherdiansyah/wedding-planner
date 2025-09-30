@@ -188,6 +188,8 @@ class PackageController extends Controller
                 'description' => $request->description,
                 'price' => $request->price,
                 'invited' => $request->invited,
+                'status' => $request->status,
+
             ]);
 
             // Simpan detail fitur package
@@ -244,6 +246,7 @@ class PackageController extends Controller
                     'description' => $request->description,
                     'price' => $request->price,
                     'invited' => $request->invited,
+                    'status' => $request->status,
 
                 ]);
 
