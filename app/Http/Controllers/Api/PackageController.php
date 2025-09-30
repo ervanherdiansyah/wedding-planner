@@ -16,16 +16,13 @@ class PackageController extends Controller
         try {
             $packages = Package::with([
                 'detailPackages',
-                'menus.permissions' => function ($q) {
-                    // filter by package_id lewat pivot
-                    $q->wherePivot('package_id', DB::raw('packages.id'));
-                }
+                'menus.permissions' // ambil semua, nanti filter di buildMenuHierarchy
             ])->get()
                 ->map(function ($package) {
                     $menus = $this->buildMenuHierarchy(
                         $package->menus->unique('id'),
                         null,
-                        $package->id // kirim package_id
+                        $package->id
                     );
 
                     return [
@@ -54,9 +51,7 @@ class PackageController extends Controller
         try {
             $package = Package::with([
                 'detailPackages',
-                'menus.permissions' => function ($q) use ($id) {
-                    $q->wherePivot('package_id', $id);
-                }
+                'menus.permissions'
             ])->findOrFail($id);
 
             $menus = $this->buildMenuHierarchy(
@@ -83,50 +78,13 @@ class PackageController extends Controller
         }
     }
 
-
-    public function getPackageByProjectId($project_id)
-    {
-        try {
-            $Package = Package::with(['detailPackages', 'menus.permissions' => function ($query) {
-                $query->select('permissions.id', 'permissions.name');
-            }])
-                ->where('project_id', $project_id)
-                ->get()
-                ->map(function ($package) {
-                    // Susun menu bertingkat
-                    $menus = $this->buildMenuHierarchy($package->menus->unique('id'));
-
-                    return [
-                        'id' => $package->id,
-                        'name' => $package->name,
-                        'description' => $package->description,
-                        'invited' => $package->invited,
-                        'price' => $package->price,
-                        'status' => $package->status,
-                        'detail_package' => $package->detailPackages,
-                        'menus' => $menus
-                    ];
-                });
-
-            return response()->json([
-                'message' => 'Fetch Data Successfully',
-                'data' => $Package
-            ], 200);
-        } catch (\Exception $th) {
-            return response()->json(['message' => $th->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Rekursif untuk build parent-child menu
-     */
     private function buildMenuHierarchy($menus, $parentId = null, $packageId = null)
     {
         return $menus
             ->where('parent', $parentId)
             ->sortBy('order')
             ->map(function ($menu) use ($menus, $packageId) {
-                // filter permission sesuai packageId
+                // filter permission sesuai packageId (pivot di menu_packages)
                 $uniquePermissions = $menu->permissions
                     ->filter(function ($permission) use ($packageId) {
                         return $permission->pivot->package_id == $packageId;
@@ -155,7 +113,6 @@ class PackageController extends Controller
             })
             ->values();
     }
-
 
     public function createPackage(Request $request)
     {
