@@ -185,7 +185,7 @@ class PackageController extends Controller
                 'detailPackage.*.name_feature' => 'required|string',
                 'access' => 'array',
                 'access.*.menu_id' => 'required|integer|exists:menus,id',
-                'access.*.permission_id' => 'required|integer|exists:permissions,id',
+                'access.*.permission_id' => 'nullable|integer|exists:permissions,id',
             ]);
 
             // Simpan package
