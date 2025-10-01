@@ -50,7 +50,7 @@ class UserManagementController extends Controller
         try {
             //code...
             Request()->validate([
-                'name' => 'required|unique:\App\Models\User,name',
+                'name' => 'required',
                 'email' => 'required|unique:\App\Models\User,email',
                 'password' => 'required|confirmed|min:8',
                 'phone_number' => 'required',
